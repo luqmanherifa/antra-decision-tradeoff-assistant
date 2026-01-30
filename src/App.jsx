@@ -385,12 +385,20 @@ export default function App() {
                     const dimLabel =
                       DIMENSIONS.find((dim) => dim.key === d.dimension)
                         ?.label || d.dimension;
+
+                    const aImpacts = result.a.impacts.filter(
+                      (i) => i.dimension === d.dimension,
+                    );
+                    const bImpacts = result.b.impacts.filter(
+                      (i) => i.dimension === d.dimension,
+                    );
+
                     return (
                       <div
                         key={d.dimension}
                         className="px-3 py-2 bg-slate-50 rounded border border-slate-200"
                       >
-                        <div className="flex justify-between items-center mb-1">
+                        <div className="flex justify-between items-center mb-2">
                           <span className="text-sm font-medium text-slate-700">
                             {dimLabel}
                           </span>
@@ -401,13 +409,97 @@ export default function App() {
                             {d.delta}
                           </span>
                         </div>
-                        <div className="flex justify-between text-xs text-slate-500">
-                          <span>
-                            {result.a.title || "A"}: {d.aVal}
-                          </span>
-                          <span>
-                            {result.b.title || "B"}: {d.bVal}
-                          </span>
+
+                        <div className="space-y-2 text-xs">
+                          <div className="bg-white rounded p-2 border border-slate-200">
+                            <div className="flex items-start justify-between mb-1">
+                              <span className="font-semibold text-slate-600">
+                                {result.a.title || "A"}
+                              </span>
+                              <span className="font-bold text-slate-700">
+                                {d.aVal}
+                              </span>
+                            </div>
+                            {aImpacts.length > 0 && (
+                              <div className="space-y-1">
+                                {aImpacts.map((impact) => (
+                                  <div
+                                    key={impact.id}
+                                    className="text-slate-600 text-[11px] leading-tight"
+                                  >
+                                    {impact.text && (
+                                      <>
+                                        <span
+                                          className={
+                                            impact.value > 0
+                                              ? "text-green-700"
+                                              : impact.value < 0
+                                                ? "text-red-700"
+                                                : "text-slate-500"
+                                          }
+                                        >
+                                          ({impact.value > 0 ? "+" : ""}
+                                          {impact.value})
+                                        </span>{" "}
+                                        {impact.text}
+                                      </>
+                                    )}
+                                    {!impact.text && (
+                                      <span className="text-slate-400 italic">
+                                        ({impact.value > 0 ? "+" : ""}
+                                        {impact.value}) - tidak ada detail
+                                      </span>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="bg-white rounded p-2 border border-slate-200">
+                            <div className="flex items-start justify-between mb-1">
+                              <span className="font-semibold text-slate-600">
+                                {result.b.title || "B"}
+                              </span>
+                              <span className="font-bold text-slate-700">
+                                {d.bVal}
+                              </span>
+                            </div>
+                            {bImpacts.length > 0 && (
+                              <div className="space-y-1">
+                                {bImpacts.map((impact) => (
+                                  <div
+                                    key={impact.id}
+                                    className="text-slate-600 text-[11px] leading-tight"
+                                  >
+                                    {impact.text && (
+                                      <>
+                                        <span
+                                          className={
+                                            impact.value > 0
+                                              ? "text-green-700"
+                                              : impact.value < 0
+                                                ? "text-red-700"
+                                                : "text-slate-500"
+                                          }
+                                        >
+                                          ({impact.value > 0 ? "+" : ""}
+                                          {impact.value})
+                                        </span>{" "}
+                                        {impact.text}
+                                      </>
+                                    )}
+                                    {!impact.text && (
+                                      <span className="text-slate-400 italic">
+                                        ({impact.value > 0 ? "+" : ""}
+                                        {impact.value}) - tidak ada detail
+                                      </span>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     );
