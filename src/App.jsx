@@ -522,10 +522,10 @@ export default function App() {
                 {constraints.map((constraint) => (
                   <div
                     key={constraint.id}
-                    className="border-2 border-amber-300 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-3"
+                    className="border-2 border-amber-300 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4"
                   >
                     <input
-                      className="w-full px-3 py-2.5 border-2 border-amber-300 rounded-lg text-sm font-medium mb-3 focus:outline-none focus:border-amber-500"
+                      className="w-full px-3 py-2.5 border-2 border-amber-300 rounded-lg text-sm font-semibold mb-4 focus:outline-none focus:border-amber-500"
                       placeholder="Anggaran kopi 300 ribu per bulan"
                       value={constraint.text}
                       onChange={(e) =>
@@ -535,15 +535,93 @@ export default function App() {
                       }
                     />
 
-                    <div className="mb-3">
-                      <p className="text-xs font-bold text-slate-600 mb-2">
-                        Pilihan yang memenuhi batasan ini?
-                      </p>
-                      <div className="space-y-2">
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-xs font-bold text-amber-900 uppercase tracking-wide">
+                          Tingkat Batasan
+                        </h3>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 mb-4">
+                        <label
+                          className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 cursor-pointer transition-all ${
+                            constraint.type === "soft"
+                              ? "bg-gradient-to-br from-amber-100 to-orange-100 border-amber-500"
+                              : "bg-white border-amber-200"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name={`type-${constraint.id}`}
+                            checked={constraint.type === "soft"}
+                            onChange={() =>
+                              updateConstraint(constraint.id, { type: "soft" })
+                            }
+                            className="w-4 h-4 border-2 border-slate-400 text-amber-600 focus:ring-0 focus:ring-offset-0"
+                          />
+                          <div className="flex-1">
+                            <div className="text-xs font-bold text-amber-900">
+                              Lunak
+                            </div>
+                            <div className="text-xs text-amber-700 font-medium">
+                              Kena penalti
+                            </div>
+                          </div>
+                        </label>
+                        <label
+                          className={`flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 cursor-pointer transition-all ${
+                            constraint.type === "hard"
+                              ? "bg-gradient-to-br from-red-100 to-rose-100 border-red-500"
+                              : "bg-white border-amber-200"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name={`type-${constraint.id}`}
+                            checked={constraint.type === "hard"}
+                            onChange={() =>
+                              updateConstraint(constraint.id, { type: "hard" })
+                            }
+                            className="w-4 h-4 border-2 border-slate-400 text-red-600 focus:ring-0 focus:ring-offset-0"
+                          />
+                          <div className="flex-1">
+                            <div className="text-xs font-bold text-red-900">
+                              Keras
+                            </div>
+                            <div className="text-xs text-red-700 font-bold">
+                              GUGUR
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      {constraint.type === "soft" && (
+                        <div className="bg-gradient-to-br from-white to-amber-50 border-2 border-amber-200 rounded-lg p-3">
+                          <label className="text-xs text-amber-900 font-bold block mb-2 uppercase tracking-wide">
+                            Penalti kalau dilanggar
+                          </label>
+                          <input
+                            type="number"
+                            className="w-full px-3 py-2.5 border-2 border-amber-300 rounded-lg text-sm font-bold text-center focus:outline-none focus:border-amber-500"
+                            value={constraint.penalty}
+                            onChange={(e) =>
+                              updateConstraint(constraint.id, {
+                                penalty: Number(e.target.value),
+                              })
+                            }
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mb-4">
+                      <h3 className="text-xs font-bold text-amber-900 mb-3 uppercase tracking-wide">
+                        Pilihan yang Memenuhi
+                      </h3>
+                      <div className="bg-gradient-to-br from-white to-amber-50 border-2 border-amber-200 rounded-lg p-3 space-y-2">
                         {options.map((opt) => (
                           <label
                             key={opt.id}
-                            className="flex items-center gap-2 text-xs"
+                            className="flex items-center gap-3 px-3 py-2.5 bg-white border-2 border-amber-200 rounded-lg cursor-pointer hover:border-amber-400 transition-colors"
                           >
                             <input
                               type="checkbox"
@@ -557,7 +635,7 @@ export default function App() {
                               }
                               className="w-4 h-4 rounded border-2 border-slate-400 text-amber-600 focus:ring-0 focus:ring-offset-0"
                             />
-                            <span className="text-slate-700 font-medium">
+                            <span className="text-sm text-slate-700 font-semibold">
                               {opt.title ||
                                 `Pilihan ${options.indexOf(opt) + 1}`}
                             </span>
@@ -566,60 +644,11 @@ export default function App() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3 mb-3">
-                      <label className="flex items-center gap-2 text-xs">
-                        <input
-                          type="radio"
-                          name={`type-${constraint.id}`}
-                          checked={constraint.type === "soft"}
-                          onChange={() =>
-                            updateConstraint(constraint.id, { type: "soft" })
-                          }
-                          className="w-4 h-4 border-2 border-slate-400 text-amber-600 focus:ring-0 focus:ring-offset-0"
-                        />
-                        <span className="text-slate-700 font-medium">
-                          Lunak (kena penalti)
-                        </span>
-                      </label>
-                      <label className="flex items-center gap-2 text-xs">
-                        <input
-                          type="radio"
-                          name={`type-${constraint.id}`}
-                          checked={constraint.type === "hard"}
-                          onChange={() =>
-                            updateConstraint(constraint.id, { type: "hard" })
-                          }
-                          className="w-4 h-4 border-2 border-slate-400 text-red-600 focus:ring-0 focus:ring-offset-0"
-                        />
-                        <span className="text-slate-700 font-medium">
-                          Keras (gugur)
-                        </span>
-                      </label>
-                    </div>
-
-                    {constraint.type === "soft" && (
-                      <div className="mb-3">
-                        <label className="text-xs text-slate-600 font-bold block mb-1">
-                          Penalti kalau dilanggar:
-                        </label>
-                        <input
-                          type="number"
-                          className="w-24 px-2.5 py-2 border-2 border-amber-300 rounded-lg text-xs font-bold text-center focus:outline-none focus:border-amber-500"
-                          value={constraint.penalty}
-                          onChange={(e) =>
-                            updateConstraint(constraint.id, {
-                              penalty: Number(e.target.value),
-                            })
-                          }
-                        />
-                      </div>
-                    )}
-
                     <button
                       onClick={() => removeConstraint(constraint.id)}
-                      className="text-xs text-red-600 font-bold"
+                      className="w-full px-4 py-2.5 text-sm text-red-700 font-bold bg-white border-2 border-red-300 rounded-lg hover:bg-red-50 transition-colors"
                     >
-                      Hapus
+                      Hapus Batasan
                     </button>
                   </div>
                 ))}
