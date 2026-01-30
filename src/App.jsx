@@ -15,6 +15,7 @@ const DIMENSIONS = [
 export default function App() {
   const [decisionContext, setDecisionContext] = useState("");
   const [options, setOptions] = useState([]);
+  const [filterMode, setFilterMode] = useState("all");
 
   const addOption = () => {
     setOptions((prev) => [
@@ -148,6 +149,30 @@ export default function App() {
 
   const result = compare();
 
+  const getFilteredDeltas = () => {
+    if (!result || !result.deltas) return [];
+
+    let filtered = result.deltas;
+
+    switch (filterMode) {
+      case "positive":
+        filtered = result.deltas.filter((d) => d.delta > 0);
+        break;
+      case "negative":
+        filtered = result.deltas.filter((d) => d.delta < 0);
+        break;
+      case "significant":
+        filtered = result.deltas.filter((d) => Math.abs(d.delta) > 3);
+        break;
+      default:
+        filtered = result.deltas;
+    }
+
+    return filtered.slice(0, 3);
+  };
+
+  const filteredDeltas = getFilteredDeltas();
+
   return (
     <div className="min-h-screen bg-slate-50 pb-8">
       <div className="max-w-md mx-auto">
@@ -271,30 +296,68 @@ export default function App() {
               </h2>
 
               <div className="mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-slate-700">
-                      {result.a.title || "Opsi A"}
-                    </span>
-                    <span className="text-lg font-bold text-slate-800">
-                      {result.totals[0].total}
-                    </span>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs font-medium text-blue-700 w-20 text-right">
+                    {result.a.title || "Opsi A"}
+                  </span>
+                  <div className="flex-1 h-8 bg-slate-100 rounded-lg overflow-hidden flex">
+                    {(() => {
+                      const totalA = result.totals[0].total;
+                      const totalB = result.totals[1].total;
+                      const total = Math.abs(totalA) + Math.abs(totalB);
+
+                      if (total === 0) {
+                        return (
+                          <>
+                            <div className="w-1/2 bg-blue-400 flex items-center justify-center">
+                              <span className="text-xs font-bold text-white">
+                                0
+                              </span>
+                            </div>
+                            <div className="w-1/2 bg-purple-400 flex items-center justify-center">
+                              <span className="text-xs font-bold text-white">
+                                0
+                              </span>
+                            </div>
+                          </>
+                        );
+                      }
+
+                      const aWidth = (Math.abs(totalA) / total) * 100;
+                      const bWidth = (Math.abs(totalB) / total) * 100;
+
+                      return (
+                        <>
+                          <div
+                            className="bg-blue-500 flex items-center justify-center transition-all duration-300"
+                            style={{ width: `${aWidth}%` }}
+                          >
+                            <span className="text-xs font-bold text-white">
+                              {totalA}
+                            </span>
+                          </div>
+                          <div
+                            className="bg-purple-500 flex items-center justify-center transition-all duration-300"
+                            style={{ width: `${bWidth}%` }}
+                          >
+                            <span className="text-xs font-bold text-white">
+                              {totalB}
+                            </span>
+                          </div>
+                        </>
+                      );
+                    })()}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-slate-800">
-                      {result.totals[1].total}
-                    </span>
-                    <span className="text-sm font-medium text-slate-700">
-                      {result.b.title || "Opsi B"}
-                    </span>
-                  </div>
+                  <span className="text-xs font-medium text-purple-700 w-20">
+                    {result.b.title || "Opsi B"}
+                  </span>
                 </div>
 
                 <div className="text-center">
                   <p className="text-xs text-slate-600">
                     {result.totals[0].total > result.totals[1].total ? (
                       <>
-                        <span className="font-semibold text-slate-800">
+                        <span className="font-semibold text-blue-700">
                           {result.a.title || "Opsi A"}
                         </span>{" "}
                         unggul{" "}
@@ -305,7 +368,7 @@ export default function App() {
                       </>
                     ) : result.totals[0].total < result.totals[1].total ? (
                       <>
-                        <span className="font-semibold text-slate-800">
+                        <span className="font-semibold text-purple-700">
                           {result.b.title || "Opsi B"}
                         </span>{" "}
                         unggul{" "}
@@ -323,50 +386,117 @@ export default function App() {
 
               {result.deltas.length > 0 && (
                 <div className="mb-4">
-                  <h3 className="text-xs font-semibold text-slate-500 mb-3 uppercase">
-                    Trade-off Utama
-                  </h3>
-                  <div className="space-y-2">
-                    {result.deltas.slice(0, 3).map((d) => {
-                      const dimLabel =
-                        DIMENSIONS.find((dim) => dim.key === d.dimension)
-                          ?.label || d.dimension;
-
-                      const winner = d.delta > 0 ? result.b : result.a;
-                      const loser = d.delta > 0 ? result.a : result.b;
-                      const winnerName =
-                        winner.title || (d.delta > 0 ? "Opsi B" : "Opsi A");
-                      const loserName =
-                        loser.title || (d.delta > 0 ? "Opsi A" : "Opsi B");
-
-                      return (
-                        <div
-                          key={d.dimension}
-                          className="bg-slate-50 rounded-lg p-3 border border-slate-200"
-                        >
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs font-bold text-slate-700">
-                              {dimLabel}
-                            </span>
-                            <span className="text-sm font-bold text-slate-600">
-                              Δ {Math.abs(d.delta)}
-                            </span>
-                          </div>
-                          <p className="text-xs text-slate-600 leading-relaxed">
-                            Pilih{" "}
-                            <span className="font-semibold text-slate-800">
-                              {winnerName}
-                            </span>{" "}
-                            → dapat +{Math.abs(d.delta)}{" "}
-                            {dimLabel.toLowerCase()} dibanding{" "}
-                            <span className="font-semibold text-slate-800">
-                              {loserName}
-                            </span>
-                          </p>
-                        </div>
-                      );
-                    })}
+                  <div className="flex items-center gap-2 mb-3">
+                    <h3 className="text-xs font-semibold text-slate-500 uppercase">
+                      Trade-off Utama
+                    </h3>
+                    <div className="flex-1"></div>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => setFilterMode("all")}
+                        className={`px-2 py-1 text-[10px] font-medium rounded transition-colors ${
+                          filterMode === "all"
+                            ? "bg-slate-600 text-white"
+                            : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        }`}
+                      >
+                        Semua
+                      </button>
+                      <button
+                        onClick={() => setFilterMode("positive")}
+                        className={`px-2 py-1 text-[10px] font-medium rounded transition-colors ${
+                          filterMode === "positive"
+                            ? "bg-green-600 text-white"
+                            : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        }`}
+                      >
+                        Positif
+                      </button>
+                      <button
+                        onClick={() => setFilterMode("negative")}
+                        className={`px-2 py-1 text-[10px] font-medium rounded transition-colors ${
+                          filterMode === "negative"
+                            ? "bg-red-600 text-white"
+                            : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        }`}
+                      >
+                        Negatif
+                      </button>
+                      <button
+                        onClick={() => setFilterMode("significant")}
+                        className={`px-2 py-1 text-[10px] font-medium rounded transition-colors ${
+                          filterMode === "significant"
+                            ? "bg-amber-600 text-white"
+                            : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        }`}
+                      >
+                        &gt;3
+                      </button>
+                    </div>
                   </div>
+
+                  {filteredDeltas.length > 0 ? (
+                    <div className="space-y-2">
+                      {filteredDeltas.map((d) => {
+                        const dimLabel =
+                          DIMENSIONS.find((dim) => dim.key === d.dimension)
+                            ?.label || d.dimension;
+
+                        const winner = d.delta > 0 ? result.b : result.a;
+                        const loser = d.delta > 0 ? result.a : result.b;
+                        const winnerName =
+                          winner.title || (d.delta > 0 ? "Opsi B" : "Opsi A");
+                        const loserName =
+                          loser.title || (d.delta > 0 ? "Opsi A" : "Opsi B");
+
+                        return (
+                          <div
+                            key={d.dimension}
+                            className="bg-slate-50 rounded-lg p-3 border border-slate-200"
+                          >
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-xs font-bold text-slate-700">
+                                {dimLabel}
+                              </span>
+                              <span
+                                className={`text-sm font-bold ${
+                                  d.delta > 0
+                                    ? "text-green-600"
+                                    : "text-red-600"
+                                }`}
+                              >
+                                Δ {d.delta > 0 ? "+" : ""}
+                                {d.delta}
+                              </span>
+                            </div>
+                            <p className="text-xs text-slate-600 leading-relaxed">
+                              Pilih{" "}
+                              <span
+                                className={`font-semibold ${
+                                  d.delta > 0
+                                    ? "text-purple-700"
+                                    : "text-blue-700"
+                                }`}
+                              >
+                                {winnerName}
+                              </span>{" "}
+                              → dapat +{Math.abs(d.delta)}{" "}
+                              {dimLabel.toLowerCase()} dibanding{" "}
+                              <span className="font-semibold text-slate-700">
+                                {loserName}
+                              </span>
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-center py-6 bg-slate-50 rounded-lg border border-slate-200">
+                      <p className="text-xs text-slate-400">
+                        Tidak ada trade-off yang sesuai filter
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
 
