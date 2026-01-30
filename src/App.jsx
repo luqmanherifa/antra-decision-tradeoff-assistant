@@ -380,7 +380,7 @@ export default function App() {
                 <h3 className="text-xs font-semibold text-slate-500 mb-2 uppercase">
                   Trade-offs Terbesar
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {result.deltas.slice(0, 5).map((d, index) => {
                     const dimLabel =
                       DIMENSIONS.find((dim) => dim.key === d.dimension)
@@ -396,110 +396,145 @@ export default function App() {
                     return (
                       <div
                         key={d.dimension}
-                        className="px-3 py-2 bg-slate-50 rounded border border-slate-200"
+                        className="bg-white rounded-lg border-2 border-slate-300 overflow-hidden"
                       >
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="text-sm font-medium text-slate-700">
+                        <div className="bg-slate-100 px-3 py-2 flex justify-between items-center border-b border-slate-300">
+                          <span className="text-sm font-bold text-slate-800">
                             {dimLabel}
                           </span>
                           <span
-                            className={`text-sm font-bold ${d.delta > 0 ? "text-green-600" : d.delta < 0 ? "text-red-600" : "text-slate-600"}`}
+                            className={`text-base font-black ${d.delta > 0 ? "text-green-600" : d.delta < 0 ? "text-red-600" : "text-slate-600"}`}
                           >
-                            {d.delta > 0 ? "+" : ""}
+                            Δ {d.delta > 0 ? "+" : ""}
                             {d.delta}
                           </span>
                         </div>
 
-                        <div className="space-y-2 text-xs">
-                          <div className="bg-white rounded p-2 border border-slate-200">
-                            <div className="flex items-start justify-between mb-1">
-                              <span className="font-semibold text-slate-600">
-                                {result.a.title || "A"}
-                              </span>
-                              <span className="font-bold text-slate-700">
-                                {d.aVal}
-                              </span>
-                            </div>
-                            {aImpacts.length > 0 && (
-                              <div className="space-y-1">
-                                {aImpacts.map((impact) => (
-                                  <div
-                                    key={impact.id}
-                                    className="text-slate-600 text-[11px] leading-tight"
-                                  >
-                                    {impact.text && (
-                                      <>
-                                        <span
-                                          className={
-                                            impact.value > 0
-                                              ? "text-green-700"
-                                              : impact.value < 0
-                                                ? "text-red-700"
-                                                : "text-slate-500"
-                                          }
-                                        >
-                                          ({impact.value > 0 ? "+" : ""}
-                                          {impact.value})
-                                        </span>{" "}
-                                        {impact.text}
-                                      </>
-                                    )}
-                                    {!impact.text && (
-                                      <span className="text-slate-400 italic">
-                                        ({impact.value > 0 ? "+" : ""}
-                                        {impact.value}) - tidak ada detail
-                                      </span>
-                                    )}
-                                  </div>
-                                ))}
+                        <div className="p-3">
+                          <div className="space-y-3">
+                            <div>
+                              <div className="flex items-baseline justify-between mb-1.5">
+                                <span className="text-xs font-bold text-blue-700">
+                                  {result.a.title || "Opsi A"}
+                                </span>
+                                <span className="text-sm font-bold text-slate-700">
+                                  {d.aVal}
+                                </span>
                               </div>
-                            )}
+                              {aImpacts.length > 0 ? (
+                                <div className="space-y-1">
+                                  {aImpacts.map((impact) => (
+                                    <div
+                                      key={impact.id}
+                                      className="bg-blue-50 rounded px-2 py-1.5 border-l-3 border-blue-400"
+                                    >
+                                      <div className="text-xs text-slate-700 leading-snug">
+                                        {impact.text ? (
+                                          <>
+                                            <span
+                                              className={`font-bold ${impact.value > 0 ? "text-green-700" : impact.value < 0 ? "text-red-700" : "text-slate-600"}`}
+                                            >
+                                              ({impact.value > 0 ? "+" : ""}
+                                              {impact.value})
+                                            </span>{" "}
+                                            {impact.text}
+                                          </>
+                                        ) : (
+                                          <span className="text-slate-400 italic">
+                                            ({impact.value > 0 ? "+" : ""}
+                                            {impact.value}) - tidak ada detail
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="text-xs text-slate-400 italic">
+                                  Tidak ada dampak
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              <div className="flex-1 border-t-2 border-dashed border-slate-300"></div>
+                              <span className="text-[10px] font-black text-slate-400 px-2">
+                                VS
+                              </span>
+                              <div className="flex-1 border-t-2 border-dashed border-slate-300"></div>
+                            </div>
+
+                            <div>
+                              <div className="flex items-baseline justify-between mb-1.5">
+                                <span className="text-xs font-bold text-purple-700">
+                                  {result.b.title || "Opsi B"}
+                                </span>
+                                <span className="text-sm font-bold text-slate-700">
+                                  {d.bVal}
+                                </span>
+                              </div>
+                              {bImpacts.length > 0 ? (
+                                <div className="space-y-1">
+                                  {bImpacts.map((impact) => (
+                                    <div
+                                      key={impact.id}
+                                      className="bg-purple-50 rounded px-2 py-1.5 border-l-3 border-purple-400"
+                                    >
+                                      <div className="text-xs text-slate-700 leading-snug">
+                                        {impact.text ? (
+                                          <>
+                                            <span
+                                              className={`font-bold ${impact.value > 0 ? "text-green-700" : impact.value < 0 ? "text-red-700" : "text-slate-600"}`}
+                                            >
+                                              ({impact.value > 0 ? "+" : ""}
+                                              {impact.value})
+                                            </span>{" "}
+                                            {impact.text}
+                                          </>
+                                        ) : (
+                                          <span className="text-slate-400 italic">
+                                            ({impact.value > 0 ? "+" : ""}
+                                            {impact.value}) - tidak ada detail
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="text-xs text-slate-400 italic">
+                                  Tidak ada dampak
+                                </div>
+                              )}
+                            </div>
                           </div>
 
-                          <div className="bg-white rounded p-2 border border-slate-200">
-                            <div className="flex items-start justify-between mb-1">
-                              <span className="font-semibold text-slate-600">
-                                {result.b.title || "B"}
-                              </span>
-                              <span className="font-bold text-slate-700">
-                                {d.bVal}
-                              </span>
+                          {(aImpacts.length > 0 || bImpacts.length > 0) && (
+                            <div className="mt-3 pt-3 border-t border-slate-200">
+                              <p className="text-[11px] text-slate-600 italic leading-relaxed">
+                                💡{" "}
+                                {d.delta > 0 ? (
+                                  <>
+                                    <span className="font-semibold text-purple-700">
+                                      {result.b.title || "Opsi B"}
+                                    </span>{" "}
+                                    lebih unggul {Math.abs(d.delta)} poin di{" "}
+                                    {dimLabel.toLowerCase()}
+                                  </>
+                                ) : d.delta < 0 ? (
+                                  <>
+                                    <span className="font-semibold text-blue-700">
+                                      {result.a.title || "Opsi A"}
+                                    </span>{" "}
+                                    lebih unggul {Math.abs(d.delta)} poin di{" "}
+                                    {dimLabel.toLowerCase()}
+                                  </>
+                                ) : (
+                                  <>Seimbang di {dimLabel.toLowerCase()}</>
+                                )}
+                              </p>
                             </div>
-                            {bImpacts.length > 0 && (
-                              <div className="space-y-1">
-                                {bImpacts.map((impact) => (
-                                  <div
-                                    key={impact.id}
-                                    className="text-slate-600 text-[11px] leading-tight"
-                                  >
-                                    {impact.text && (
-                                      <>
-                                        <span
-                                          className={
-                                            impact.value > 0
-                                              ? "text-green-700"
-                                              : impact.value < 0
-                                                ? "text-red-700"
-                                                : "text-slate-500"
-                                          }
-                                        >
-                                          ({impact.value > 0 ? "+" : ""}
-                                          {impact.value})
-                                        </span>{" "}
-                                        {impact.text}
-                                      </>
-                                    )}
-                                    {!impact.text && (
-                                      <span className="text-slate-400 italic">
-                                        ({impact.value > 0 ? "+" : ""}
-                                        {impact.value}) - tidak ada detail
-                                      </span>
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </div>
+                          )}
                         </div>
                       </div>
                     );
@@ -509,25 +544,209 @@ export default function App() {
 
               <div className="mb-4">
                 <h3 className="text-xs font-semibold text-slate-500 mb-2 uppercase">
-                  Insight
+                  Insight Mendalam
                 </h3>
-                {result.deltas[0] && (
-                  <div className="px-3 py-3 bg-blue-50 rounded border border-blue-200 text-sm text-slate-700 leading-relaxed">
-                    Perbedaan terbesar ada di{" "}
-                    <span className="font-semibold text-blue-700">
-                      {DIMENSIONS.find(
-                        (d) => d.key === result.deltas[0].dimension,
-                      )?.label || result.deltas[0].dimension}
-                    </span>
-                    . Memilih{" "}
-                    <span className="font-semibold">
-                      {result.deltas[0].delta > 0
-                        ? result.b.title || "Opsi B"
-                        : result.a.title || "Opsi A"}
-                    </span>{" "}
-                    memberikan keuntungan lebih di dimensi ini.
+                <div className="space-y-3">
+                  <div className="bg-blue-50 rounded-lg border-2 border-blue-200 p-3">
+                    <h4 className="text-sm font-bold text-blue-900 mb-2">
+                      📊 {result.a.title || "Opsi A"}
+                    </h4>
+
+                    {(() => {
+                      const strengths = result.a.impacts.filter(
+                        (i) => Number(i.value) > 0,
+                      );
+                      if (strengths.length > 0) {
+                        return (
+                          <div className="mb-2">
+                            <div className="text-[10px] font-semibold text-green-700 mb-1 uppercase tracking-wide">
+                              ✓ Kelebihan:
+                            </div>
+                            <div className="space-y-1">
+                              {strengths.map((s) => (
+                                <div
+                                  key={s.id}
+                                  className="text-xs text-slate-700 leading-snug pl-2 border-l-2 border-green-400"
+                                >
+                                  <span className="font-semibold text-green-700">
+                                    {
+                                      DIMENSIONS.find(
+                                        (d) => d.key === s.dimension,
+                                      )?.label
+                                    }
+                                  </span>
+                                  {s.text && (
+                                    <>
+                                      : {s.text}{" "}
+                                      <span className="text-green-600 font-medium">
+                                        (+{s.value})
+                                      </span>
+                                    </>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      }
+                    })()}
+
+                    {(() => {
+                      const weaknesses = result.a.impacts.filter(
+                        (i) => Number(i.value) < 0,
+                      );
+                      if (weaknesses.length > 0) {
+                        return (
+                          <div>
+                            <div className="text-[10px] font-semibold text-red-700 mb-1 uppercase tracking-wide">
+                              ✗ Kelemahan:
+                            </div>
+                            <div className="space-y-1">
+                              {weaknesses.map((w) => (
+                                <div
+                                  key={w.id}
+                                  className="text-xs text-slate-700 leading-snug pl-2 border-l-2 border-red-400"
+                                >
+                                  <span className="font-semibold text-red-700">
+                                    {
+                                      DIMENSIONS.find(
+                                        (d) => d.key === w.dimension,
+                                      )?.label
+                                    }
+                                  </span>
+                                  {w.text && (
+                                    <>
+                                      : {w.text}{" "}
+                                      <span className="text-red-600 font-medium">
+                                        ({w.value})
+                                      </span>
+                                    </>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      }
+                    })()}
                   </div>
-                )}
+
+                  <div className="bg-purple-50 rounded-lg border-2 border-purple-200 p-3">
+                    <h4 className="text-sm font-bold text-purple-900 mb-2">
+                      📊 {result.b.title || "Opsi B"}
+                    </h4>
+
+                    {(() => {
+                      const strengths = result.b.impacts.filter(
+                        (i) => Number(i.value) > 0,
+                      );
+                      if (strengths.length > 0) {
+                        return (
+                          <div className="mb-2">
+                            <div className="text-[10px] font-semibold text-green-700 mb-1 uppercase tracking-wide">
+                              ✓ Kelebihan:
+                            </div>
+                            <div className="space-y-1">
+                              {strengths.map((s) => (
+                                <div
+                                  key={s.id}
+                                  className="text-xs text-slate-700 leading-snug pl-2 border-l-2 border-green-400"
+                                >
+                                  <span className="font-semibold text-green-700">
+                                    {
+                                      DIMENSIONS.find(
+                                        (d) => d.key === s.dimension,
+                                      )?.label
+                                    }
+                                  </span>
+                                  {s.text && (
+                                    <>
+                                      : {s.text}{" "}
+                                      <span className="text-green-600 font-medium">
+                                        (+{s.value})
+                                      </span>
+                                    </>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      }
+                    })()}
+
+                    {(() => {
+                      const weaknesses = result.b.impacts.filter(
+                        (i) => Number(i.value) < 0,
+                      );
+                      if (weaknesses.length > 0) {
+                        return (
+                          <div>
+                            <div className="text-[10px] font-semibold text-red-700 mb-1 uppercase tracking-wide">
+                              ✗ Kelemahan:
+                            </div>
+                            <div className="space-y-1">
+                              {weaknesses.map((w) => (
+                                <div
+                                  key={w.id}
+                                  className="text-xs text-slate-700 leading-snug pl-2 border-l-2 border-red-400"
+                                >
+                                  <span className="font-semibold text-red-700">
+                                    {
+                                      DIMENSIONS.find(
+                                        (d) => d.key === w.dimension,
+                                      )?.label
+                                    }
+                                  </span>
+                                  {w.text && (
+                                    <>
+                                      : {w.text}{" "}
+                                      <span className="text-red-600 font-medium">
+                                        ({w.value})
+                                      </span>
+                                    </>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      }
+                    })()}
+                  </div>
+
+                  {result.deltas[0] && (
+                    <div className="px-3 py-3 bg-amber-50 rounded-lg border-2 border-amber-300">
+                      <div className="text-[10px] font-bold text-amber-900 mb-2 uppercase tracking-wide">
+                        ⚡ Trade-off Utama
+                      </div>
+                      <p className="text-xs text-slate-700 leading-relaxed">
+                        Perbedaan terbesar ada di{" "}
+                        <span className="font-bold text-amber-900">
+                          {
+                            DIMENSIONS.find(
+                              (d) => d.key === result.deltas[0].dimension,
+                            )?.label
+                          }
+                        </span>
+                        . Memilih{" "}
+                        <span className="font-bold text-blue-700">
+                          {result.deltas[0].delta > 0
+                            ? result.b.title || "Opsi B"
+                            : result.a.title || "Opsi A"}
+                        </span>{" "}
+                        memberikan keuntungan {Math.abs(result.deltas[0].delta)}{" "}
+                        poin lebih tinggi di dimensi ini dibanding{" "}
+                        <span className="font-bold text-purple-700">
+                          {result.deltas[0].delta > 0
+                            ? result.a.title || "Opsi A"
+                            : result.b.title || "Opsi B"}
+                        </span>
+                        .
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {result.implicitPriorities.length > 0 && (
