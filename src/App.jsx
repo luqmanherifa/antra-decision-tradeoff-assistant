@@ -240,9 +240,9 @@ export default function App() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pb-6">
       <div className="max-w-md mx-auto">
         <div className="bg-gradient-to-r from-slate-700 via-slate-600 to-slate-700 text-white px-4 py-5 mb-4">
-          <h1 className="text-lg font-bold">Bandingin Pilihan</h1>
+          <h1 className="text-lg font-bold">Bandingkan Pilihan</h1>
           <p className="text-xs text-slate-200 mt-1">
-            Lihat jelas apa yang kamu dapat dan korbankan
+            Lihat jelas apa yang kamu dapatkan dan korbankan
           </p>
         </div>
 
@@ -253,7 +253,7 @@ export default function App() {
             </h2>
             <input
               className="w-full px-3 py-2.5 border-2 border-slate-300 rounded-lg text-sm focus:outline-none focus:border-slate-500"
-              placeholder="Beli kopi di cafe atau bikin sendiri?"
+              placeholder="Beli kopi di kafe atau bikin sendiri?"
               value={decisionContext}
               onChange={(e) => setDecisionContext(e.target.value)}
             />
@@ -310,7 +310,7 @@ export default function App() {
                       <input
                         className="flex-1 px-3 py-2.5 border-2 border-slate-300 rounded-lg text-sm font-semibold focus:outline-none focus:border-slate-500"
                         placeholder={
-                          idx === 0 ? "Beli di Cafe" : "Bikin Sendiri"
+                          idx % 2 === 0 ? "Beli di Kafe" : "Bikin Sendiri"
                         }
                         value={opt.title}
                         onChange={(e) =>
@@ -365,23 +365,43 @@ export default function App() {
                           <input
                             className="w-full px-2.5 py-2 border-2 border-slate-300 rounded-lg text-xs focus:outline-none focus:border-slate-500"
                             placeholder={
-                              impact.dimension === "time"
-                                ? "Langsung jadi"
-                                : impact.dimension === "money"
-                                  ? "25 ribu per cangkir"
-                                  : impact.dimension === "energy"
-                                    ? "Tinggal pesan saja"
-                                    : impact.dimension === "stress"
-                                      ? "Tidak ribet pagi"
-                                      : impact.dimension === "risk"
-                                        ? "Kualitas selalu konsisten"
-                                        : impact.dimension === "growth"
-                                          ? "Tidak belajar skill"
-                                          : impact.dimension === "peace"
-                                            ? "Suasana cafe nyaman"
-                                            : impact.dimension === "flexibility"
-                                              ? "Tergantung jam buka"
-                                              : "Ketemu teman barista"
+                              idx % 2 === 0
+                                ? impact.dimension === "time"
+                                  ? "Langsung jadi"
+                                  : impact.dimension === "money"
+                                    ? "25 ribu per cangkir"
+                                    : impact.dimension === "energy"
+                                      ? "Tinggal pesan saja"
+                                      : impact.dimension === "stress"
+                                        ? "Tidak ribet pagi"
+                                        : impact.dimension === "risk"
+                                          ? "Kualitas selalu konsisten"
+                                          : impact.dimension === "growth"
+                                            ? "Tidak belajar skill"
+                                            : impact.dimension === "peace"
+                                              ? "Suasana kafe nyaman"
+                                              : impact.dimension ===
+                                                  "flexibility"
+                                                ? "Tergantung jam buka"
+                                                : "Ketemu teman barista"
+                                : impact.dimension === "time"
+                                  ? "Perlu waktu buat"
+                                  : impact.dimension === "money"
+                                    ? "5 ribu per cangkir"
+                                    : impact.dimension === "energy"
+                                      ? "Harus nyiapin sendiri"
+                                      : impact.dimension === "stress"
+                                        ? "Ribet kalau terburu"
+                                        : impact.dimension === "risk"
+                                          ? "Kadang gagal rasanya"
+                                          : impact.dimension === "growth"
+                                            ? "Belajar skill baru"
+                                            : impact.dimension === "peace"
+                                              ? "Menikmati proses sendiri"
+                                              : impact.dimension ===
+                                                  "flexibility"
+                                                ? "Bisa kapan saja"
+                                                : "Hemat uang bulanan"
                             }
                             value={impact.text}
                             onChange={(e) =>
@@ -417,7 +437,7 @@ export default function App() {
                         <input
                           className="flex-1 min-w-0 px-2 py-2 border-2 border-slate-300 rounded-lg text-xs font-semibold focus:outline-none focus:border-slate-500"
                           placeholder={
-                            idx === 0 ? "Beli di Cafe" : "Bikin Sendiri"
+                            idx % 2 === 0 ? "Beli di Kafe" : "Bikin Sendiri"
                           }
                           value={opt.title}
                           onChange={(e) =>
@@ -506,7 +526,7 @@ export default function App() {
                   >
                     <input
                       className="w-full px-3 py-2.5 border-2 border-amber-300 rounded-lg text-sm font-medium mb-3 focus:outline-none focus:border-amber-500"
-                      placeholder="Budget kopi 300rb/bulan"
+                      placeholder="Anggaran kopi 300 ribu per bulan"
                       value={constraint.text}
                       onChange={(e) =>
                         updateConstraint(constraint.id, {
