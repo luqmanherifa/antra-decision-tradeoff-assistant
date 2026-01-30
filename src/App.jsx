@@ -17,6 +17,7 @@ export default function App() {
   const [options, setOptions] = useState([]);
   const [filterMode, setFilterMode] = useState("all");
   const [constraints, setConstraints] = useState([]);
+  const [viewMode, setViewMode] = useState("detail");
 
   const addConstraint = () => {
     setConstraints((prev) => [
@@ -239,7 +240,7 @@ export default function App() {
     <div className="min-h-screen bg-slate-50 pb-8">
       <div className="max-w-md mx-auto">
         <div className="bg-slate-700 text-white p-4 mb-4">
-          <h1 className="text-xl font-bold">Decision Trade-off</h1>
+          <h1 className="text-xl font-bold">Bandingin Pilihan</h1>
           <p className="text-xs text-slate-300 mt-1">
             Lihat jelas apa yang kamu dapat dan korbankan
           </p>
@@ -261,9 +262,33 @@ export default function App() {
 
         <div className="px-4 mb-4">
           <div className="bg-white rounded-lg shadow-sm p-4">
-            <h2 className="text-sm font-semibold text-slate-600 mb-3 uppercase tracking-wide">
-              Pilihan
-            </h2>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wide">
+                Pilihan
+              </h2>
+              <div className="flex gap-1 bg-slate-100 rounded-lg p-1">
+                <button
+                  onClick={() => setViewMode("detail")}
+                  className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
+                    viewMode === "detail"
+                      ? "bg-white text-slate-700 shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  📝 Lengkap
+                </button>
+                <button
+                  onClick={() => setViewMode("quick")}
+                  className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
+                    viewMode === "quick"
+                      ? "bg-white text-slate-700 shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  ⚡ Cepat
+                </button>
+              </div>
+            </div>
             <button
               onClick={addOption}
               className="w-full mb-4 px-4 py-2.5 bg-slate-600 text-white rounded-lg text-sm font-medium active:bg-slate-700"
@@ -271,103 +296,186 @@ export default function App() {
               + Tambah Pilihan
             </button>
 
-            <div className="space-y-4">
-              {options.map((opt, idx) => (
-                <div
-                  key={opt.id}
-                  className="border border-slate-200 rounded-lg p-3"
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-6 h-6 rounded-full bg-slate-600 text-white flex items-center justify-center text-xs font-semibold">
-                      {idx + 1}
-                    </div>
-                    <input
-                      className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent"
-                      placeholder={idx === 0 ? "Beli di Cafe" : "Bikin Sendiri"}
-                      value={opt.title}
-                      onChange={(e) =>
-                        updateOptionTitle(opt.id, e.target.value)
-                      }
-                    />
-                  </div>
-
-                  <button
-                    onClick={() => addImpact(opt.id)}
-                    className="w-full mb-3 px-3 py-2 bg-slate-100 text-slate-700 text-xs font-medium rounded border border-slate-200 active:bg-slate-200"
+            {viewMode === "detail" ? (
+              <div className="space-y-4">
+                {options.map((opt, idx) => (
+                  <div
+                    key={opt.id}
+                    className="border border-slate-200 rounded-lg p-3"
                   >
-                    + Dampak
-                  </button>
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-6 h-6 rounded-full bg-slate-600 text-white flex items-center justify-center text-xs font-semibold">
+                        {idx + 1}
+                      </div>
+                      <input
+                        className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent"
+                        placeholder={
+                          idx === 0 ? "Beli di Cafe" : "Bikin Sendiri"
+                        }
+                        value={opt.title}
+                        onChange={(e) =>
+                          updateOptionTitle(opt.id, e.target.value)
+                        }
+                      />
+                    </div>
 
-                  <div className="space-y-2">
-                    {opt.impacts.map((impact) => (
-                      <div
-                        key={impact.id}
-                        className="bg-slate-50 rounded p-2 space-y-2"
-                      >
-                        <div className="flex gap-2">
-                          <select
-                            value={impact.dimension}
-                            onChange={(e) =>
-                              updateImpact(opt.id, impact.id, {
-                                dimension: e.target.value,
-                              })
-                            }
-                            className="flex-1 px-2 py-1.5 border border-slate-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-slate-400"
-                          >
-                            {DIMENSIONS.map((d) => (
-                              <option key={d.key} value={d.key}>
-                                {d.label}
-                              </option>
-                            ))}
-                          </select>
+                    <button
+                      onClick={() => addImpact(opt.id)}
+                      className="w-full mb-3 px-3 py-2 bg-slate-100 text-slate-700 text-xs font-medium rounded border border-slate-200 active:bg-slate-200"
+                    >
+                      + Dampak
+                    </button>
+
+                    <div className="space-y-2">
+                      {opt.impacts.map((impact) => (
+                        <div
+                          key={impact.id}
+                          className="bg-slate-50 rounded p-2 space-y-2"
+                        >
+                          <div className="flex gap-2">
+                            <select
+                              value={impact.dimension}
+                              onChange={(e) =>
+                                updateImpact(opt.id, impact.id, {
+                                  dimension: e.target.value,
+                                })
+                              }
+                              className="flex-1 px-2 py-1.5 border border-slate-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-slate-400"
+                            >
+                              {DIMENSIONS.map((d) => (
+                                <option key={d.key} value={d.key}>
+                                  {d.label}
+                                </option>
+                              ))}
+                            </select>
+
+                            <input
+                              type="number"
+                              className="w-16 px-2 py-1.5 border border-slate-300 rounded text-xs text-center focus:outline-none focus:ring-2 focus:ring-slate-400"
+                              placeholder="0"
+                              value={impact.value}
+                              onChange={(e) =>
+                                updateImpact(opt.id, impact.id, {
+                                  value: Number(e.target.value),
+                                })
+                              }
+                            />
+                          </div>
 
                           <input
-                            type="number"
-                            className="w-16 px-2 py-1.5 border border-slate-300 rounded text-xs text-center focus:outline-none focus:ring-2 focus:ring-slate-400"
-                            placeholder="0"
-                            value={impact.value}
+                            className="w-full px-2 py-1.5 border border-slate-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-slate-400"
+                            placeholder={
+                              impact.dimension === "time"
+                                ? "Langsung jadi"
+                                : impact.dimension === "money"
+                                  ? "25 ribu per cangkir"
+                                  : impact.dimension === "energy"
+                                    ? "Tinggal pesan saja"
+                                    : impact.dimension === "stress"
+                                      ? "Tidak ribet pagi"
+                                      : impact.dimension === "risk"
+                                        ? "Kualitas selalu konsisten"
+                                        : impact.dimension === "growth"
+                                          ? "Tidak belajar skill"
+                                          : impact.dimension === "peace"
+                                            ? "Suasana cafe nyaman"
+                                            : impact.dimension === "flexibility"
+                                              ? "Tergantung jam buka"
+                                              : "Ketemu teman barista"
+                            }
+                            value={impact.text}
                             onChange={(e) =>
                               updateImpact(opt.id, impact.id, {
-                                value: Number(e.target.value),
+                                text: e.target.value,
                               })
                             }
                           />
                         </div>
-
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div>
+                {options.length > 2 && (
+                  <div className="mb-3 px-3 py-2 bg-amber-50 border border-amber-200 rounded text-xs text-amber-900">
+                    ⚠️ Mode cepat maksimal 2 pilihan. Pilihan ke-3 dan
+                    seterusnya disembunyikan.
+                  </div>
+                )}
+                <div className="grid grid-cols-2 gap-3">
+                  {options.slice(0, 2).map((opt, idx) => (
+                    <div
+                      key={opt.id}
+                      className="border border-slate-200 rounded-lg p-3"
+                    >
+                      <div className="flex items-center gap-2 mb-3">
+                        <div className="w-5 h-5 flex-shrink-0 rounded-full bg-slate-600 text-white flex items-center justify-center text-[10px] font-semibold">
+                          {idx + 1}
+                        </div>
                         <input
-                          className="w-full px-2 py-1.5 border border-slate-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-slate-400"
+                          className="flex-1 min-w-0 px-2 py-1.5 border border-slate-300 rounded text-xs font-medium focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent"
                           placeholder={
-                            impact.dimension === "time"
-                              ? "Langsung jadi"
-                              : impact.dimension === "money"
-                                ? "25 ribu per cangkir"
-                                : impact.dimension === "energy"
-                                  ? "Tinggal pesan saja"
-                                  : impact.dimension === "stress"
-                                    ? "Tidak ribet pagi"
-                                    : impact.dimension === "risk"
-                                      ? "Kualitas selalu konsisten"
-                                      : impact.dimension === "growth"
-                                        ? "Tidak belajar skill"
-                                        : impact.dimension === "peace"
-                                          ? "Suasana cafe nyaman"
-                                          : impact.dimension === "flexibility"
-                                            ? "Tergantung jam buka"
-                                            : "Ketemu teman barista"
+                            idx === 0 ? "Beli di Cafe" : "Bikin Sendiri"
                           }
-                          value={impact.text}
+                          value={opt.title}
                           onChange={(e) =>
-                            updateImpact(opt.id, impact.id, {
-                              text: e.target.value,
-                            })
+                            updateOptionTitle(opt.id, e.target.value)
                           }
                         />
                       </div>
-                    ))}
-                  </div>
+
+                      <button
+                        onClick={() => addImpact(opt.id)}
+                        className="w-full mb-2 px-2 py-1.5 bg-slate-100 text-slate-700 text-xs font-medium rounded border border-slate-200 active:bg-slate-200"
+                      >
+                        + Dampak
+                      </button>
+
+                      <div className="space-y-2">
+                        {opt.impacts.map((impact) => (
+                          <div
+                            key={impact.id}
+                            className="bg-slate-50 rounded p-2"
+                          >
+                            <div className="flex items-center gap-2">
+                              <select
+                                value={impact.dimension}
+                                onChange={(e) =>
+                                  updateImpact(opt.id, impact.id, {
+                                    dimension: e.target.value,
+                                  })
+                                }
+                                className="flex-1 min-w-0 px-2 py-1 border border-slate-300 rounded text-[10px] focus:outline-none focus:ring-1 focus:ring-slate-400"
+                              >
+                                {DIMENSIONS.map((d) => (
+                                  <option key={d.key} value={d.key}>
+                                    {d.label}
+                                  </option>
+                                ))}
+                              </select>
+
+                              <input
+                                type="number"
+                                className="w-14 flex-shrink-0 px-1 py-1 border border-slate-300 rounded text-[10px] text-center focus:outline-none focus:ring-1 focus:ring-slate-400"
+                                placeholder="0"
+                                value={impact.value}
+                                onChange={(e) =>
+                                  updateImpact(opt.id, impact.id, {
+                                    value: Number(e.target.value),
+                                  })
+                                }
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            )}
           </div>
         </div>
 
