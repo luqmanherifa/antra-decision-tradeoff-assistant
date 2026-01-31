@@ -1,5 +1,5 @@
 import { DIMENSIONS } from "../constants/dimensions";
-import { ClipboardListIcon } from "./icons";
+import { ClipboardListIcon, PlusIcon } from "./icons";
 
 export default function OptionsSection({
   options,
@@ -9,7 +9,10 @@ export default function OptionsSection({
   onUpdateTitle,
   onAddImpact,
   onUpdateImpact,
+  onRemoveOption,
 }) {
+  const isAddButtonDisabled = viewMode === "quick" && options.length >= 2;
+
   return (
     <div className="px-5 mb-6">
       <div className="bg-white rounded-xl border border-stone-200 p-5">
@@ -49,9 +52,16 @@ export default function OptionsSection({
 
         <button
           onClick={onAddOption}
-          className={`w-full ${options.length > 0 ? "mb-4" : ""} px-4 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-bold transition-colors`}
+          disabled={isAddButtonDisabled}
+          className={`w-full ${options.length > 0 ? "mb-4" : ""} px-4 py-3 rounded-lg text-sm font-bold transition-colors flex items-center justify-center gap-2 ${
+            isAddButtonDisabled
+              ? "bg-stone-300 text-stone-500 cursor-not-allowed"
+              : "bg-amber-500 hover:bg-amber-600 text-white"
+          }`}
         >
-          + Tambah Pilihan
+          <PlusIcon className="w-4 h-4" />
+          Tambah Pilihan
+          {isAddButtonDisabled}
         </button>
 
         {viewMode === "detail" ? (
@@ -60,6 +70,7 @@ export default function OptionsSection({
             onUpdateTitle={onUpdateTitle}
             onAddImpact={onAddImpact}
             onUpdateImpact={onUpdateImpact}
+            onRemoveOption={onRemoveOption}
           />
         ) : (
           <QuickView
@@ -67,6 +78,7 @@ export default function OptionsSection({
             onUpdateTitle={onUpdateTitle}
             onAddImpact={onAddImpact}
             onUpdateImpact={onUpdateImpact}
+            onRemoveOption={onRemoveOption}
           />
         )}
       </div>
@@ -74,7 +86,13 @@ export default function OptionsSection({
   );
 }
 
-function DetailView({ options, onUpdateTitle, onAddImpact, onUpdateImpact }) {
+function DetailView({
+  options,
+  onUpdateTitle,
+  onAddImpact,
+  onUpdateImpact,
+  onRemoveOption,
+}) {
   const colors = [
     {
       bg: "bg-blue-50",
@@ -126,13 +144,33 @@ function DetailView({ options, onUpdateTitle, onAddImpact, onUpdateImpact }) {
                 value={opt.title}
                 onChange={(e) => onUpdateTitle(opt.id, e.target.value)}
               />
+              <button
+                onClick={() => onRemoveOption(opt.id)}
+                className="w-8 h-8 flex-shrink-0 rounded-lg bg-rose-500 hover:bg-rose-600 text-white flex items-center justify-center transition-colors"
+                title="Hapus pilihan"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
             </div>
 
             <button
               onClick={() => onAddImpact(opt.id)}
-              className={`w-full ${opt.impacts.length > 0 ? "mb-3" : ""} px-4 py-2.5 ${color.button} text-white text-xs font-bold rounded-lg transition-colors`}
+              className={`w-full ${opt.impacts.length > 0 ? "mb-3" : ""} px-4 py-2.5 ${color.button} text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2`}
             >
-              + Dampak
+              <PlusIcon className="w-3.5 h-3.5" />
+              Dampak
             </button>
 
             {opt.impacts.length > 0 && (
@@ -156,7 +194,13 @@ function DetailView({ options, onUpdateTitle, onAddImpact, onUpdateImpact }) {
   );
 }
 
-function QuickView({ options, onUpdateTitle, onAddImpact, onUpdateImpact }) {
+function QuickView({
+  options,
+  onUpdateTitle,
+  onAddImpact,
+  onUpdateImpact,
+  onRemoveOption,
+}) {
   const colors = [
     {
       bg: "bg-blue-50",
@@ -176,11 +220,10 @@ function QuickView({ options, onUpdateTitle, onAddImpact, onUpdateImpact }) {
 
   return (
     <div>
-      {options.length > 2 && (
+      {options.length > 1 && (
         <div className="mb-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl">
           <p className="text-xs font-semibold text-amber-900 leading-relaxed tracking-normal">
-            Mode cepat maksimal 2 pilihan. Pilihan ke-3 dan seterusnya
-            disembunyikan.
+            Mode cepat maksimal 2 pilihan.
           </p>
         </div>
       )}
@@ -206,6 +249,25 @@ function QuickView({ options, onUpdateTitle, onAddImpact, onUpdateImpact }) {
                   value={opt.title}
                   onChange={(e) => onUpdateTitle(opt.id, e.target.value)}
                 />
+                <button
+                  onClick={() => onRemoveOption(opt.id)}
+                  className="w-7 h-7 flex-shrink-0 rounded-lg bg-rose-500 hover:bg-rose-600 text-white flex items-center justify-center transition-colors"
+                  title="Hapus pilihan"
+                >
+                  <svg
+                    className="w-3.5 h-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2.5}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
               </div>
 
               <button

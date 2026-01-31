@@ -9,6 +9,8 @@ export default function ResultsSection({
 }) {
   if (!result) return null;
 
+  const hasMultipleOptions = result.totals && result.totals.length > 2;
+
   return (
     <div className="px-5">
       <div className="bg-white rounded-xl border border-stone-200 p-5">
@@ -21,14 +23,17 @@ export default function ResultsSection({
           </h2>
         </div>
 
-        <ScoreComparison result={result} />
+        {hasMultipleOptions ? (
+          <MultiOptionComparison result={result} />
+        ) : (
+          <ScoreComparison result={result} />
+        )}
 
-        {(result.totals[0].violations.length > 0 ||
-          result.totals[1].violations.length > 0) && (
+        {result.totals.some((t) => t.violations.length > 0) && (
           <ViolationsSection result={result} />
         )}
 
-        {result.deltas.length > 0 && (
+        {result.deltas && result.deltas.length > 0 && (
           <DeltasSection
             result={result}
             filterMode={filterMode}
@@ -40,6 +45,153 @@ export default function ResultsSection({
         {(result.isCloseCall || result.hasExtremeSacrifice) && (
           <NoticesSection result={result} />
         )}
+      </div>
+    </div>
+  );
+}
+
+function MultiOptionComparison({ result }) {
+  const sortedTotals = [...result.totals].sort((a, b) => {
+    if (a.isDisqualified && !b.isDisqualified) return 1;
+    if (!a.isDisqualified && b.isDisqualified) return -1;
+    return b.total - a.total;
+  });
+
+  const colors = [
+    {
+      bg: "bg-blue-50",
+      border: "border-blue-200",
+      text: "text-blue-600",
+      bar: "bg-blue-500",
+    },
+    {
+      bg: "bg-purple-50",
+      border: "border-purple-200",
+      text: "text-purple-600",
+      bar: "bg-purple-500",
+    },
+    {
+      bg: "bg-emerald-50",
+      border: "border-emerald-200",
+      text: "text-emerald-600",
+      bar: "bg-emerald-500",
+    },
+    {
+      bg: "bg-amber-50",
+      border: "border-amber-200",
+      text: "text-amber-600",
+      bar: "bg-amber-500",
+    },
+  ];
+
+  const maxScore = Math.max(
+    ...sortedTotals
+      .filter((t) => !t.isDisqualified)
+      .map((t) => Math.abs(t.total)),
+    1,
+  );
+
+  return (
+    <div className="mb-6">
+      <h3 className="text-xs font-bold text-stone-600 uppercase tracking-wider mb-4">
+        Peringkat Pilihan
+      </h3>
+
+      <div className="space-y-3">
+        {sortedTotals.map((total, idx) => {
+          const color = colors[idx % colors.length];
+          const barWidth = total.isDisqualified
+            ? 0
+            : (Math.abs(total.total) / maxScore) * 100;
+
+          return (
+            <div
+              key={total.optionId}
+              className={`border ${color.border} rounded-xl p-4 ${color.bg}`}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2.5">
+                  <div
+                    className={`w-7 h-7 rounded-full ${color.bar} flex items-center justify-center flex-shrink-0`}
+                  >
+                    <span className="text-white text-xs font-bold">
+                      {total.isDisqualified ? "✗" : idx + 1}
+                    </span>
+                  </div>
+                  <span className="text-sm font-bold text-stone-800 tracking-normal">
+                    {total.title || `Pilihan ${idx + 1}`}
+                  </span>
+                </div>
+                <div
+                  className={`text-xl font-black ${total.isDisqualified ? "text-stone-400" : color.text}`}
+                >
+                  {total.isDisqualified ? "GUGUR" : total.total}
+                </div>
+              </div>
+
+              {!total.isDisqualified && (
+                <div className="h-2.5 bg-white rounded-full overflow-hidden border border-stone-200">
+                  <div
+                    className={`h-full ${color.bar} transition-all duration-300`}
+                    style={{ width: `${barWidth}%` }}
+                  ></div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-4 text-center">
+        <div className="inline-block bg-stone-50 border border-stone-200 rounded-lg px-5 py-3">
+          <p className="text-sm text-stone-700 font-semibold leading-relaxed tracking-normal">
+            {(() => {
+              const qualifiedOptions = sortedTotals.filter(
+                (t) => !t.isDisqualified,
+              );
+
+              if (qualifiedOptions.length === 0) {
+                return <>Semua pilihan gugur</>;
+              }
+
+              if (qualifiedOptions.length === 1) {
+                return (
+                  <>
+                    <span className={`font-bold ${colors[0].text}`}>
+                      {qualifiedOptions[0].title || "Pilihan terbaik"}
+                    </span>{" "}
+                    adalah satu-satunya pilihan yang tersisa
+                  </>
+                );
+              }
+
+              const best = qualifiedOptions[0];
+              const secondBest = qualifiedOptions[1];
+              const colorBest =
+                colors[
+                  sortedTotals.findIndex((t) => t.optionId === best.optionId) %
+                    colors.length
+                ];
+
+              if (best.total === secondBest.total) {
+                return <>Beberapa pilihan memiliki skor seimbang</>;
+              }
+
+              return (
+                <>
+                  <span className={`font-bold ${colorBest.text}`}>
+                    {best.title || "Pilihan terbaik"}
+                  </span>{" "}
+                  unggul{" "}
+                  <span className="font-bold text-amber-600">
+                    {Math.abs(best.total - secondBest.total)}
+                  </span>{" "}
+                  poin
+                </>
+              );
+            })()}
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -170,6 +322,13 @@ function ScoreComparison({ result }) {
 }
 
 function ViolationsSection({ result }) {
+  const colors = [
+    { text: "text-blue-600" },
+    { text: "text-purple-600" },
+    { text: "text-emerald-600" },
+    { text: "text-amber-600" },
+  ];
+
   return (
     <div className="mb-6">
       <h3 className="text-xs font-bold text-stone-600 uppercase tracking-wider mb-3">
@@ -179,6 +338,8 @@ function ViolationsSection({ result }) {
       <div className="space-y-3">
         {result.totals.map((total, idx) => {
           if (total.violations.length === 0) return null;
+          const color = colors[idx % colors.length];
+
           return (
             <div
               key={total.optionId}
@@ -189,8 +350,10 @@ function ViolationsSection({ result }) {
               }`}
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-bold text-stone-800 tracking-normal">
-                  {total.title || `Pilihan ${idx === 0 ? "A" : "B"}`}
+                <span
+                  className={`text-sm font-bold tracking-normal ${color.text}`}
+                >
+                  {total.title || `Pilihan ${idx + 1}`}
                 </span>
                 {total.isDisqualified && (
                   <span className="text-xs font-bold text-rose-700 bg-rose-100 px-3 py-1 rounded-full border border-rose-300">
@@ -401,38 +564,24 @@ function NoticesSection({ result }) {
             yang cukup signifikan di salah satu pilihan.
           </p>
           <div className="space-y-2 pl-2">
-            {result.sacrifices.a && result.sacrifices.a.value <= -5 && (
-              <div className="flex items-start gap-2.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-rose-600 mt-1.5 flex-shrink-0"></div>
-                <p className="text-sm text-rose-800 font-medium tracking-normal">
-                  {result.a.title || "Pilihan A"}:{" "}
-                  {
-                    DIMENSIONS.find(
-                      (d) => d.key === result.sacrifices.a.dimension,
-                    )?.label
-                  }{" "}
-                  <span className="font-bold">
-                    ({result.sacrifices.a.value})
-                  </span>
-                </p>
-              </div>
-            )}
-            {result.sacrifices.b && result.sacrifices.b.value <= -5 && (
-              <div className="flex items-start gap-2.5">
-                <div className="w-1.5 h-1.5 rounded-full bg-rose-600 mt-1.5 flex-shrink-0"></div>
-                <p className="text-sm text-rose-800 font-medium tracking-normal">
-                  {result.b.title || "Pilihan B"}:{" "}
-                  {
-                    DIMENSIONS.find(
-                      (d) => d.key === result.sacrifices.b.dimension,
-                    )?.label
-                  }{" "}
-                  <span className="font-bold">
-                    ({result.sacrifices.b.value})
-                  </span>
-                </p>
-              </div>
-            )}
+            {result.totals.map((total, idx) => {
+              const sacrifice = result.sacrifices?.[total.optionId];
+              if (!sacrifice || sacrifice.value > -5) return null;
+
+              return (
+                <div key={total.optionId} className="flex items-start gap-2.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-rose-600 mt-1.5 flex-shrink-0"></div>
+                  <p className="text-sm text-rose-800 font-medium tracking-normal">
+                    {total.title || `Pilihan ${idx + 1}`}:{" "}
+                    {
+                      DIMENSIONS.find((d) => d.key === sacrifice.dimension)
+                        ?.label
+                    }{" "}
+                    <span className="font-bold">({sacrifice.value})</span>
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
