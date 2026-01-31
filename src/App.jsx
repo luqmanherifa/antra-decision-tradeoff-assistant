@@ -27,6 +27,7 @@ export default function App() {
     updateImpact,
     result,
     filteredDeltas,
+    removeOption,
   } = useDecisionComparison();
 
   return (
@@ -51,6 +52,7 @@ export default function App() {
               onUpdateTitle={updateOptionTitle}
               onAddImpact={addImpact}
               onUpdateImpact={updateImpact}
+              onRemoveOption={removeOption}
             />
 
             <ConstraintsSection
