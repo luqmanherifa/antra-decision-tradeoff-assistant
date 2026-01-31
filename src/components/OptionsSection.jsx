@@ -66,7 +66,7 @@ export default function OptionsSection({
         >
           <PlusIcon className="w-4 h-4" />
           Tambah Pilihan
-          {isAddButtonDisabled && " (Maks 2 di mode cepat)"}
+          {isAddButtonDisabled}
         </button>
 
         {viewMode === "detail" ? (
@@ -213,11 +213,10 @@ function QuickView({
 
   return (
     <div>
-      {options.length > 2 && (
+      {options.length > 1 && (
         <div className="mb-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl">
           <p className="text-xs font-semibold text-amber-900 leading-relaxed tracking-normal">
-            Mode cepat maksimal 2 pilihan. Pilihan ke-3 dan seterusnya
-            disembunyikan.
+            Mode cepat maksimal 2 pilihan.
           </p>
         </div>
       )}
