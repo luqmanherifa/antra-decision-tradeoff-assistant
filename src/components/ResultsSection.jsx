@@ -114,9 +114,13 @@ function MultiOptionComparison({ result }) {
                   <div
                     className={`w-7 h-7 rounded-full ${color.bar} flex items-center justify-center flex-shrink-0`}
                   >
-                    <span className="text-white text-xs font-bold">
-                      {total.isDisqualified ? "✗" : idx + 1}
-                    </span>
+                    {total.isDisqualified ? (
+                      <CloseIcon className="w-4 h-4 text-white" />
+                    ) : (
+                      <span className="text-white text-xs font-bold">
+                        {idx + 1}
+                      </span>
+                    )}
                   </div>
                   <span className="text-sm font-bold text-stone-800 tracking-normal">
                     {total.title || `Pilihan ${idx + 1}`}
@@ -205,8 +209,12 @@ function ScoreComparison({ result }) {
           <div className="text-xs font-bold text-blue-700 mb-2 uppercase tracking-wide">
             {result.a.title || "Pilihan A"}
           </div>
-          <div className="text-2xl font-black text-blue-600">
-            {result.totals[0].isDisqualified ? "✗" : result.totals[0].total}
+          <div className="text-2xl font-black text-blue-600 flex items-center gap-2">
+            {result.totals[0].isDisqualified ? (
+              <CloseIcon className="w-6 h-6" />
+            ) : (
+              result.totals[0].total
+            )}
           </div>
         </div>
 
@@ -222,8 +230,12 @@ function ScoreComparison({ result }) {
           <div className="text-xs font-bold text-purple-700 mb-2 uppercase tracking-wide">
             {result.b.title || "Pilihan B"}
           </div>
-          <div className="text-2xl font-black text-purple-600">
-            {result.totals[1].isDisqualified ? "✗" : result.totals[1].total}
+          <div className="text-2xl font-black text-purple-600 flex items-center gap-2">
+            {result.totals[1].isDisqualified ? (
+              <CloseIcon className="w-6 h-6" />
+            ) : (
+              result.totals[1].total
+            )}
           </div>
         </div>
       </div>
