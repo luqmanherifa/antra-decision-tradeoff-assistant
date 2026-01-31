@@ -28,7 +28,7 @@ export default function App() {
   } = useDecisionComparison();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pb-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 pb-8">
       <div className="max-w-md mx-auto">
         <Header />
 
