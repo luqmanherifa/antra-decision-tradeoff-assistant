@@ -1,5 +1,10 @@
 import { DIMENSIONS } from "../constants/dimensions";
-import { ClipboardListIcon, PlusIcon } from "./icons";
+import {
+  ClipboardListIcon,
+  PlusIcon,
+  CloseIcon,
+  ChevronDownIcon,
+} from "./icons";
 
 export default function OptionsSection({
   options,
@@ -61,7 +66,7 @@ export default function OptionsSection({
         >
           <PlusIcon className="w-4 h-4" />
           Tambah Pilihan
-          {isAddButtonDisabled}
+          {isAddButtonDisabled && " (Maks 2 di mode cepat)"}
         </button>
 
         {viewMode === "detail" ? (
@@ -149,19 +154,7 @@ function DetailView({
                 className="w-8 h-8 flex-shrink-0 rounded-lg bg-rose-500 hover:bg-rose-600 text-white flex items-center justify-center transition-colors"
                 title="Hapus pilihan"
               >
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2.5}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <CloseIcon className="w-4 h-4" />
               </button>
             </div>
 
@@ -220,10 +213,11 @@ function QuickView({
 
   return (
     <div>
-      {options.length > 1 && (
+      {options.length > 2 && (
         <div className="mb-3 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl">
           <p className="text-xs font-semibold text-amber-900 leading-relaxed tracking-normal">
-            Mode cepat maksimal 2 pilihan.
+            Mode cepat maksimal 2 pilihan. Pilihan ke-3 dan seterusnya
+            disembunyikan.
           </p>
         </div>
       )}
@@ -254,27 +248,16 @@ function QuickView({
                   className="w-7 h-7 flex-shrink-0 rounded-lg bg-rose-500 hover:bg-rose-600 text-white flex items-center justify-center transition-colors"
                   title="Hapus pilihan"
                 >
-                  <svg
-                    className="w-3.5 h-3.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2.5}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
+                  <CloseIcon className="w-3.5 h-3.5" />
                 </button>
               </div>
 
               <button
                 onClick={() => onAddImpact(opt.id)}
-                className={`w-full ${opt.impacts.length > 0 ? "mb-2.5" : ""} px-3 py-2 ${color.button} text-white text-xs font-bold rounded-lg transition-colors`}
+                className={`w-full ${opt.impacts.length > 0 ? "mb-2.5" : ""} px-3 py-2 ${color.button} text-white text-xs font-bold rounded-lg transition-colors flex items-center justify-center gap-2`}
               >
-                + Dampak
+                <PlusIcon className="w-3.5 h-3.5" />
+                Dampak
               </button>
 
               {opt.impacts.length > 0 && (
@@ -302,19 +285,7 @@ function QuickView({
                             ))}
                           </select>
                           <div className="absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none text-stone-500">
-                            <svg
-                              className="w-3 h-3"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2.5}
-                                d="M19 9l-7 7-7-7"
-                              />
-                            </svg>
+                            <ChevronDownIcon className="w-3 h-3" />
                           </div>
                         </div>
 
@@ -389,19 +360,7 @@ function ImpactItem({ impact, optionIndex, onUpdate }) {
             ))}
           </select>
           <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-stone-500">
-            <svg
-              className="w-3.5 h-3.5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2.5}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
+            <ChevronDownIcon className="w-3.5 h-3.5" />
           </div>
         </div>
 

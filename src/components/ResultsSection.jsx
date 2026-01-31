@@ -1,5 +1,5 @@
 import { DIMENSIONS } from "../constants/dimensions";
-import { ChartBarIcon, CloseIcon } from "./icons";
+import { ArrowDownIcon, ArrowUpIcon, ChartBarIcon, CloseIcon } from "./icons";
 
 export default function ResultsSection({
   result,
@@ -490,19 +490,23 @@ function DeltasSection({
                     {dimLabel}
                   </span>
                   <div
-                    className={`px-3 py-1 rounded-lg border ${
+                    className={`px-3 py-1 rounded-lg border flex items-center gap-1.5 ${
                       d.delta > 0
                         ? "bg-emerald-100 border-emerald-300"
                         : "bg-rose-100 border-rose-300"
                     }`}
                   >
+                    {d.delta > 0 ? (
+                      <ArrowUpIcon className="w-3.5 h-3.5 text-emerald-700" />
+                    ) : (
+                      <ArrowDownIcon className="w-3.5 h-3.5 text-rose-700" />
+                    )}
                     <span
                       className={`text-xs font-bold ${
                         d.delta > 0 ? "text-emerald-700" : "text-rose-700"
                       }`}
                     >
-                      Δ {d.delta > 0 ? "+" : ""}
-                      {d.delta}
+                      {Math.abs(d.delta)}
                     </span>
                   </div>
                 </div>
