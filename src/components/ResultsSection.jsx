@@ -53,7 +53,7 @@ function ScoreComparison({ result }) {
           <div className="text-xs font-bold text-blue-700 mb-2 uppercase tracking-wide">
             {result.a.title || "Pilihan A"}
           </div>
-          <div className="text-3xl font-black text-blue-600">
+          <div className="text-2xl font-black text-blue-600">
             {result.totals[0].isDisqualified ? "✗" : result.totals[0].total}
           </div>
         </div>
@@ -70,7 +70,7 @@ function ScoreComparison({ result }) {
           <div className="text-xs font-bold text-purple-700 mb-2 uppercase tracking-wide">
             {result.b.title || "Pilihan B"}
           </div>
-          <div className="text-3xl font-black text-purple-600">
+          <div className="text-2xl font-black text-purple-600">
             {result.totals[1].isDisqualified ? "✗" : result.totals[1].total}
           </div>
         </div>
@@ -255,7 +255,7 @@ function DeltasSection({
           Beda Utama
         </h3>
 
-        <div className="grid grid-cols-2 gap-1.5">
+        <div className="flex gap-1.5">
           <button
             onClick={() => onFilterModeChange("all")}
             className={`px-3 py-1.5 text-xs font-bold rounded-md border transition-colors ${

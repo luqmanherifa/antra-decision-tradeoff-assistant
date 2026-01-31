@@ -214,21 +214,38 @@ function QuickView({ options, onUpdateTitle, onAddImpact, onUpdateImpact }) {
                     className="bg-white rounded-lg p-2 border border-stone-200"
                   >
                     <div className="flex items-center gap-1.5">
-                      <select
-                        value={impact.dimension}
-                        onChange={(e) =>
-                          onUpdateImpact(opt.id, impact.id, {
-                            dimension: e.target.value,
-                          })
-                        }
-                        className="flex-1 min-w-0 px-2 py-1.5 border border-stone-300 rounded-md text-xs font-semibold text-stone-900 focus:outline-none focus:border-amber-500 transition-colors"
-                      >
-                        {DIMENSIONS.map((d) => (
-                          <option key={d.key} value={d.key}>
-                            {d.label}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="relative flex-1 min-w-0">
+                        <select
+                          value={impact.dimension}
+                          onChange={(e) =>
+                            onUpdateImpact(opt.id, impact.id, {
+                              dimension: e.target.value,
+                            })
+                          }
+                          className="w-full px-2 pr-6 py-1.5 border border-stone-300 rounded-md text-xs font-semibold text-stone-900 focus:outline-none focus:border-amber-500 transition-colors appearance-none bg-white"
+                        >
+                          {DIMENSIONS.map((d) => (
+                            <option key={d.key} value={d.key}>
+                              {d.label}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none text-stone-500">
+                          <svg
+                            className="w-3 h-3"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2.5}
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        </div>
+                      </div>
 
                       <input
                         type="number"
@@ -287,17 +304,34 @@ function ImpactItem({ impact, optionIndex, onUpdate }) {
   return (
     <div className="bg-white rounded-lg p-3 border border-stone-200 space-y-2">
       <div className="flex gap-2">
-        <select
-          value={impact.dimension}
-          onChange={(e) => onUpdate({ dimension: e.target.value })}
-          className="flex-1 px-3 py-2 border border-stone-300 rounded-lg text-xs font-semibold text-stone-900 focus:outline-none focus:border-amber-500 transition-colors"
-        >
-          {DIMENSIONS.map((d) => (
-            <option key={d.key} value={d.key}>
-              {d.label}
-            </option>
-          ))}
-        </select>
+        <div className="relative flex-1">
+          <select
+            value={impact.dimension}
+            onChange={(e) => onUpdate({ dimension: e.target.value })}
+            className="w-full px-3 pr-7 py-2 border border-stone-300 rounded-lg text-xs font-semibold text-stone-900 focus:outline-none focus:border-amber-500 transition-colors appearance-none bg-white"
+          >
+            {DIMENSIONS.map((d) => (
+              <option key={d.key} value={d.key}>
+                {d.label}
+              </option>
+            ))}
+          </select>
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-stone-500">
+            <svg
+              className="w-3.5 h-3.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2.5}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </div>
+        </div>
 
         <input
           type="number"

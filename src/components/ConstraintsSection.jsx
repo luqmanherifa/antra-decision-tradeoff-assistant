@@ -88,7 +88,7 @@ function ConstraintItem({
 
       <div className="mb-4">
         <h3 className="text-xs font-semibold text-stone-600 mb-3 tracking-normal">
-          TINGKAT BATASAN
+          Tingkat Batasan
         </h3>
 
         <div className="grid grid-cols-2 gap-2.5 mb-3">
@@ -138,7 +138,7 @@ function ConstraintItem({
         {constraint.type === "soft" && (
           <div className="bg-white border border-amber-200 rounded-lg p-3">
             <label className="text-xs text-stone-600 font-semibold block mb-2 tracking-normal">
-              PENALTI JIKA DILANGGAR
+              Penalti Jika Dilanggar
             </label>
             <input
               type="number"
@@ -152,7 +152,7 @@ function ConstraintItem({
 
       <div className="mb-4">
         <h3 className="text-xs font-semibold text-stone-600 mb-3 tracking-normal">
-          PILIHAN YANG MEMENUHI
+          Pilihan yang Memenuhi
         </h3>
         <div className="bg-white border border-stone-200 rounded-lg p-2.5 space-y-2">
           {options.map((opt) => (
