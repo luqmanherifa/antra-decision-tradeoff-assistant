@@ -83,7 +83,7 @@ function ConstraintItem({
   return (
     <div className="border border-amber-200 bg-amber-50 rounded-xl p-4">
       <input
-        className="w-full px-4 py-3 border border-stone-300 rounded-lg text-sm font-semibold mb-4 bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
+        className="w-full px-4 py-3 border border-stone-300 rounded-lg text-sm font-medium mb-4 bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
         placeholder="Anggaran kopi 300 ribu per bulan"
         value={constraint.text}
         onChange={(e) => onUpdate({ text: e.target.value })}

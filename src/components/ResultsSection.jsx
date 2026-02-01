@@ -127,7 +127,7 @@ function MultiOptionComparison({ result }) {
                   </span>
                 </div>
                 <div
-                  className={`text-xl font-black ${total.isDisqualified ? "text-stone-400" : color.text}`}
+                  className={`text-base font-bold ${total.isDisqualified ? "text-stone-400" : color.text}`}
                 >
                   {total.isDisqualified ? "GUGUR" : total.total}
                 </div>
@@ -368,7 +368,7 @@ function ViolationsSection({ result }) {
                   {total.title || `Pilihan ${idx + 1}`}
                 </span>
                 {total.isDisqualified && (
-                  <span className="text-xs font-bold text-rose-700 bg-rose-100 px-3 py-1 rounded-full border border-rose-300">
+                  <span className="text-xs font-semibold text-rose-700 bg-rose-100 px-3 py-1 rounded-full border border-rose-300">
                     GUGUR
                   </span>
                 )}
@@ -387,7 +387,7 @@ function ViolationsSection({ result }) {
                       )}
                       {v.type === "hard" && (
                         <span className="text-rose-700 font-bold ml-1">
-                          (gugur)
+                          Gugur
                         </span>
                       )}
                     </p>

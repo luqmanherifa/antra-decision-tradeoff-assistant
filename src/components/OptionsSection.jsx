@@ -143,7 +143,7 @@ function DetailView({
                 {idx + 1}
               </div>
               <input
-                className="flex-1 min-w-0 px-3 py-2.5 border border-stone-300 rounded-lg text-sm font-semibold bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
+                className="flex-1 min-w-0 px-3 py-2.5 border border-stone-300 rounded-lg text-sm font-medium bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
                 placeholder={idx % 2 === 0 ? "Beli di Kafe" : "Bikin Sendiri"}
                 value={opt.title}
                 onChange={(e) => onUpdateTitle(opt.id, e.target.value)}
@@ -236,7 +236,7 @@ function QuickView({
                   {idx + 1}
                 </div>
                 <input
-                  className="flex-1 min-w-0 px-2.5 py-2 border border-stone-300 rounded-lg text-xs font-semibold bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
+                  className="flex-1 min-w-0 px-2.5 py-2 border border-stone-300 rounded-lg text-xs font-medium bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
                   placeholder={idx % 2 === 0 ? "Beli di Kafe" : "Bikin Sendiri"}
                   value={opt.title}
                   onChange={(e) => onUpdateTitle(opt.id, e.target.value)}

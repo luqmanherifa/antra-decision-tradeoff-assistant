@@ -118,7 +118,7 @@ export function useDecisionComparison() {
 
       constraints.forEach((constraint) => {
         const passed = constraint.checks[o.id];
-        if (passed === false) {
+        if (passed !== true) {
           if (constraint.type === "soft") {
             constraintPenalty += constraint.penalty;
           }
