@@ -171,59 +171,11 @@ export function useDecisionComparison() {
             .sort((x, y) => Math.abs(y.delta) - Math.abs(x.delta))
         : [];
 
-    const getBiggestSacrifice = (option) => {
-      if (!option || option.impacts.length === 0) return null;
-      const negatives = option.impacts.filter((i) => Number(i.value) < 0);
-      if (negatives.length === 0) return null;
-
-      const worst = negatives.reduce((min, impact) =>
-        Number(impact.value) < Number(min.value) ? impact : min,
-      );
-
-      return {
-        dimension: worst.dimension,
-        value: Number(worst.value),
-        text: worst.text,
-      };
-    };
-
-    const sacrifices = {};
-    options.forEach((opt) => {
-      sacrifices[opt.id] = getBiggestSacrifice(opt);
-    });
-
-    if (a) sacrifices.a = getBiggestSacrifice(a);
-    if (b) sacrifices.b = getBiggestSacrifice(b);
-
-    const sortedTotals = [...totals].sort((x, y) => {
-      if (x.isDisqualified && !y.isDisqualified) return 1;
-      if (!x.isDisqualified && y.isDisqualified) return -1;
-      return y.total - x.total;
-    });
-
-    const qualifiedTotals = sortedTotals.filter((t) => !t.isDisqualified);
-
-    let isCloseCall = false;
-    if (qualifiedTotals.length >= 2) {
-      const scoreDiff = Math.abs(
-        qualifiedTotals[0].total - qualifiedTotals[1].total,
-      );
-      const closeCallThreshold = 3;
-      isCloseCall = scoreDiff <= closeCallThreshold;
-    }
-
-    const hasExtremeSacrifice = Object.values(sacrifices).some(
-      (sac) => sac && sac.value <= -5,
-    );
-
     return {
       totals,
       deltas,
       a,
       b,
-      sacrifices,
-      isCloseCall,
-      hasExtremeSacrifice,
     };
   };
 
@@ -239,9 +191,6 @@ export function useDecisionComparison() {
         break;
       case "negative":
         filtered = result.deltas.filter((d) => d.delta < 0);
-        break;
-      case "significant":
-        filtered = result.deltas.filter((d) => Math.abs(d.delta) > 3);
         break;
       default:
         filtered = result.deltas;
