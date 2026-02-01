@@ -66,7 +66,6 @@ export default function OptionsSection({
         >
           <PlusIcon className="w-4 h-4" />
           Tambah Pilihan
-          {isAddButtonDisabled}
         </button>
 
         {viewMode === "detail" ? (
@@ -137,14 +136,14 @@ function DetailView({
             key={opt.id}
             className={`border ${color.border} rounded-xl p-4 ${color.bg}`}
           >
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex items-center gap-2 mb-3">
               <div
                 className={`w-8 h-8 rounded-full ${color.badge} text-white flex items-center justify-center text-sm font-bold flex-shrink-0`}
               >
                 {idx + 1}
               </div>
               <input
-                className="flex-1 px-3 py-2.5 border border-stone-300 rounded-lg text-sm font-semibold bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
+                className="flex-1 min-w-0 px-3 py-2.5 border border-stone-300 rounded-lg text-sm font-semibold bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
                 placeholder={idx % 2 === 0 ? "Beli di Kafe" : "Bikin Sendiri"}
                 value={opt.title}
                 onChange={(e) => onUpdateTitle(opt.id, e.target.value)}
