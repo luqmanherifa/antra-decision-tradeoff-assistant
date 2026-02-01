@@ -89,7 +89,7 @@ function ConstraintItem({
   return (
     <div className="border border-amber-200 bg-amber-50 rounded-xl p-4">
       <input
-        className="w-full px-4 py-3 border border-stone-300 rounded-lg text-sm font-semibold mb-4 bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
+        className="w-full px-4 py-3 border border-stone-300 rounded-lg text-sm font-medium mb-4 bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
         placeholder="Budget kopi hari ini cuma 15 ribu"
         value={constraint.text}
         onChange={(e) => onUpdate({ text: e.target.value })}
@@ -152,15 +152,23 @@ function ConstraintItem({
             <input
               type="text"
               inputMode="numeric"
-              className="w-full px-3 py-2.5 border border-stone-300 rounded-lg text-sm font-bold text-center text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
+              className="w-full px-3 py-2.5 border border-stone-300 rounded-lg text-sm font-semibold text-center text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
               placeholder="-10"
-              value={constraint.penalty === 0 ? "" : constraint.penalty}
+              value={
+                typeof constraint.penalty === "string"
+                  ? constraint.penalty
+                  : constraint.penalty === 0
+                    ? ""
+                    : constraint.penalty
+              }
               onChange={(e) => {
                 const val = e.target.value;
-                if (val === "" || val === "-" || /^-?\d+$/.test(val)) {
-                  onUpdate({
-                    penalty: val === "" || val === "-" ? 0 : Number(val),
-                  });
+                if (val === "") {
+                  onUpdate({ penalty: 0 });
+                } else if (val === "-") {
+                  onUpdate({ penalty: "-" });
+                } else if (/^-?\d+$/.test(val)) {
+                  onUpdate({ penalty: Number(val) });
                 }
               }}
             />
@@ -169,9 +177,9 @@ function ConstraintItem({
       </div>
 
       <div className="mb-4">
-        <div className="mb-2">
+        <div className="mb-3">
           <h3 className="text-xs font-semibold text-stone-600 tracking-normal">
-            Pilihan yang MELANGGAR batasan ini
+            Pilihan yang melanggar batasan ini
           </h3>
           <p className="text-xs text-stone-500 mt-1 tracking-normal">
             {constraint.type === "soft"

@@ -292,17 +292,22 @@ function QuickView({
                           inputMode="numeric"
                           className="w-14 flex-shrink-0 px-1.5 py-1.5 border border-stone-300 rounded-md text-xs font-bold text-center text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
                           placeholder="0"
-                          value={impact.value === 0 ? "" : impact.value}
+                          value={
+                            typeof impact.value === "string"
+                              ? impact.value
+                              : impact.value === 0
+                                ? ""
+                                : impact.value
+                          }
                           onChange={(e) => {
                             const val = e.target.value;
-                            if (
-                              val === "" ||
-                              val === "-" ||
-                              /^-?\d+$/.test(val)
-                            ) {
+                            if (val === "") {
+                              onUpdateImpact(opt.id, impact.id, { value: 0 });
+                            } else if (val === "-") {
+                              onUpdateImpact(opt.id, impact.id, { value: "-" });
+                            } else if (/^-?\d+$/.test(val)) {
                               onUpdateImpact(opt.id, impact.id, {
-                                value:
-                                  val === "" || val === "-" ? 0 : Number(val),
+                                value: Number(val),
                               });
                             }
                           }}
@@ -376,11 +381,21 @@ function ImpactItem({ impact, optionIndex, onUpdate }) {
           inputMode="numeric"
           className="w-16 px-2.5 py-2 border border-stone-300 rounded-lg text-xs font-bold text-center text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
           placeholder="0"
-          value={impact.value === 0 ? "" : impact.value}
+          value={
+            typeof impact.value === "string"
+              ? impact.value
+              : impact.value === 0
+                ? ""
+                : impact.value
+          }
           onChange={(e) => {
             const val = e.target.value;
-            if (val === "" || val === "-" || /^-?\d+$/.test(val)) {
-              onUpdate({ value: val === "" || val === "-" ? 0 : Number(val) });
+            if (val === "") {
+              onUpdate({ value: 0 });
+            } else if (val === "-") {
+              onUpdate({ value: "-" });
+            } else if (/^-?\d+$/.test(val)) {
+              onUpdate({ value: Number(val) });
             }
           }}
         />
