@@ -29,10 +29,6 @@ export default function ResultsSection({
           <ScoreComparison result={result} />
         )}
 
-        {result.totals.some((t) => t.violations.length > 0) && (
-          <ViolationsSection result={result} />
-        )}
-
         {result.deltas && result.deltas.length > 0 && (
           <DeltasSection
             result={result}
@@ -40,10 +36,6 @@ export default function ResultsSection({
             filteredDeltas={filteredDeltas}
             onFilterModeChange={onFilterModeChange}
           />
-        )}
-
-        {(result.isCloseCall || result.hasExtremeSacrifice) && (
-          <NoticesSection result={result} />
         )}
       </div>
     </div>
@@ -54,7 +46,7 @@ function MultiOptionComparison({ result }) {
   const sortedTotals = [...result.totals].sort((a, b) => {
     if (a.isDisqualified && !b.isDisqualified) return 1;
     if (!a.isDisqualified && b.isDisqualified) return -1;
-    return b.total - a.total;
+    return Number(b.total || 0) - Number(a.total || 0);
   });
 
   const colors = [
@@ -87,7 +79,7 @@ function MultiOptionComparison({ result }) {
   const maxScore = Math.max(
     ...sortedTotals
       .filter((t) => !t.isDisqualified)
-      .map((t) => Math.abs(t.total)),
+      .map((t) => Math.abs(Number(t.total) || 0)),
     1,
   );
 
@@ -100,9 +92,10 @@ function MultiOptionComparison({ result }) {
       <div className="space-y-3">
         {sortedTotals.map((total, idx) => {
           const color = colors[idx % colors.length];
+          const totalNum = Number(total.total) || 0;
           const barWidth = total.isDisqualified
             ? 0
-            : (Math.abs(total.total) / maxScore) * 100;
+            : (Math.abs(totalNum) / maxScore) * 100;
 
           return (
             <div
@@ -129,7 +122,7 @@ function MultiOptionComparison({ result }) {
                 <div
                   className={`text-base font-bold ${total.isDisqualified ? "text-stone-400" : color.text}`}
                 >
-                  {total.isDisqualified ? "GUGUR" : total.total}
+                  {total.isDisqualified ? "GUGUR" : totalNum}
                 </div>
               </div>
 
@@ -177,7 +170,10 @@ function MultiOptionComparison({ result }) {
                     colors.length
                 ];
 
-              if (best.total === secondBest.total) {
+              const bestTotal = Number(best.total) || 0;
+              const secondTotal = Number(secondBest.total) || 0;
+
+              if (bestTotal === secondTotal) {
                 return <>Beberapa pilihan memiliki skor seimbang</>;
               }
 
@@ -188,7 +184,7 @@ function MultiOptionComparison({ result }) {
                   </span>{" "}
                   unggul{" "}
                   <span className="font-bold text-amber-600">
-                    {Math.abs(best.total - secondBest.total)}
+                    {Math.abs(bestTotal - secondTotal)}
                   </span>{" "}
                   poin
                 </>
@@ -202,6 +198,9 @@ function MultiOptionComparison({ result }) {
 }
 
 function ScoreComparison({ result }) {
+  const total0 = Number(result.totals[0].total) || 0;
+  const total1 = Number(result.totals[1].total) || 0;
+
   return (
     <div className="mb-6">
       <div className="flex items-center gap-3 mb-4">
@@ -213,7 +212,7 @@ function ScoreComparison({ result }) {
             {result.totals[0].isDisqualified ? (
               <CloseIcon className="w-6 h-6" />
             ) : (
-              result.totals[0].total
+              total0
             )}
           </div>
         </div>
@@ -234,7 +233,7 @@ function ScoreComparison({ result }) {
             {result.totals[1].isDisqualified ? (
               <CloseIcon className="w-6 h-6" />
             ) : (
-              result.totals[1].total
+              total1
             )}
           </div>
         </div>
@@ -242,9 +241,7 @@ function ScoreComparison({ result }) {
 
       <div className="h-3 bg-stone-100 rounded-full overflow-hidden flex border border-stone-200 mb-4">
         {(() => {
-          const totalA = result.totals[0].total;
-          const totalB = result.totals[1].total;
-          const absTotal = Math.abs(totalA) + Math.abs(totalB);
+          const absTotal = Math.abs(total0) + Math.abs(total1);
 
           if (absTotal === 0) {
             return (
@@ -255,8 +252,8 @@ function ScoreComparison({ result }) {
             );
           }
 
-          const aWidth = (Math.abs(totalA) / absTotal) * 100;
-          const bWidth = (Math.abs(totalB) / absTotal) * 100;
+          const aWidth = (Math.abs(total0) / absTotal) * 100;
+          const bWidth = (Math.abs(total1) / absTotal) * 100;
 
           return (
             <>
@@ -301,25 +298,25 @@ function ScoreComparison({ result }) {
                 </span>{" "}
                 gugur
               </>
-            ) : result.totals[0].total > result.totals[1].total ? (
+            ) : total0 > total1 ? (
               <>
                 <span className="font-bold text-blue-600">
                   {result.a.title || "Pilihan A"}
                 </span>{" "}
                 unggul{" "}
                 <span className="font-bold text-amber-600">
-                  {Math.abs(result.totals[0].total - result.totals[1].total)}
+                  {Math.abs(total0 - total1)}
                 </span>{" "}
                 poin
               </>
-            ) : result.totals[0].total < result.totals[1].total ? (
+            ) : total0 < total1 ? (
               <>
                 <span className="font-bold text-purple-600">
                   {result.b.title || "Pilihan B"}
                 </span>{" "}
                 unggul{" "}
                 <span className="font-bold text-amber-600">
-                  {Math.abs(result.totals[0].total - result.totals[1].total)}
+                  {Math.abs(total0 - total1)}
                 </span>{" "}
                 poin
               </>
@@ -333,90 +330,6 @@ function ScoreComparison({ result }) {
   );
 }
 
-function ViolationsSection({ result }) {
-  const colors = [
-    { text: "text-blue-600" },
-    { text: "text-purple-600" },
-    { text: "text-emerald-600" },
-    { text: "text-amber-600" },
-  ];
-
-  return (
-    <div className="mb-6">
-      <h3 className="text-xs font-bold text-stone-600 uppercase tracking-wider mb-3">
-        Pelanggaran Batasan
-      </h3>
-
-      <div className="space-y-3">
-        {result.totals.map((total, idx) => {
-          if (total.violations.length === 0) return null;
-          const color = colors[idx % colors.length];
-
-          return (
-            <div
-              key={total.optionId}
-              className={`rounded-xl p-4 border ${
-                total.isDisqualified
-                  ? "bg-rose-50 border-rose-200"
-                  : "bg-amber-50 border-amber-200"
-              }`}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <span
-                  className={`text-sm font-bold tracking-normal ${color.text}`}
-                >
-                  {total.title || `Pilihan ${idx + 1}`}
-                </span>
-                {total.isDisqualified && (
-                  <span className="text-xs font-semibold text-rose-700 bg-rose-100 px-3 py-1 rounded-full border border-rose-300">
-                    GUGUR
-                  </span>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                {total.violations.map((v, vIdx) => (
-                  <div key={vIdx} className="flex items-start gap-2.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-stone-400 mt-1.5 flex-shrink-0"></div>
-                    <p className="text-xs text-stone-700 font-medium flex-1 leading-relaxed tracking-normal">
-                      {v.text}
-                      {v.type === "soft" && (
-                        <span className="text-amber-700 font-bold ml-1">
-                          ({v.penalty} poin)
-                        </span>
-                      )}
-                      {v.type === "hard" && (
-                        <span className="text-rose-700 font-bold ml-1">
-                          Gugur
-                        </span>
-                      )}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              {!total.isDisqualified && total.constraintPenalty !== 0 && (
-                <div className="mt-3 pt-3 border-t border-stone-200">
-                  <p className="text-xs text-stone-600 font-medium tracking-normal">
-                    Skor dampak:{" "}
-                    <span className="font-bold text-stone-800">
-                      {total.impactTotal}
-                    </span>{" "}
-                    → Skor akhir:{" "}
-                    <span className="font-bold text-stone-800">
-                      {total.total}
-                    </span>
-                  </p>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 function DeltasSection({
   result,
   filterMode,
@@ -424,16 +337,16 @@ function DeltasSection({
   onFilterModeChange,
 }) {
   return (
-    <div className="mb-6">
+    <div>
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-xs font-bold text-stone-600 uppercase tracking-wider">
           Beda Utama
         </h3>
 
-        <div className="flex gap-1.5">
+        <div className="flex gap-1">
           <button
             onClick={() => onFilterModeChange("all")}
-            className={`px-3 py-1.5 text-xs font-bold rounded-md border transition-colors ${
+            className={`px-2 py-1 text-xs font-bold rounded-md border transition-colors ${
               filterMode === "all"
                 ? "bg-stone-600 text-white border-stone-600"
                 : "bg-white text-stone-600 border-stone-300 hover:border-stone-400"
@@ -443,33 +356,23 @@ function DeltasSection({
           </button>
           <button
             onClick={() => onFilterModeChange("positive")}
-            className={`px-3 py-1.5 text-xs font-bold rounded-md border transition-colors ${
+            className={`px-2 py-1 text-xs font-bold rounded-md border transition-colors ${
               filterMode === "positive"
                 ? "bg-emerald-500 text-white border-emerald-500"
                 : "bg-white text-stone-600 border-stone-300 hover:border-stone-400"
             }`}
           >
-            Untung
+            +
           </button>
           <button
             onClick={() => onFilterModeChange("negative")}
-            className={`px-3 py-1.5 text-xs font-bold rounded-md border transition-colors ${
+            className={`px-2 py-1 text-xs font-bold rounded-md border transition-colors ${
               filterMode === "negative"
                 ? "bg-rose-500 text-white border-rose-500"
                 : "bg-white text-stone-600 border-stone-300 hover:border-stone-400"
             }`}
           >
-            Rugi
-          </button>
-          <button
-            onClick={() => onFilterModeChange("significant")}
-            className={`px-3 py-1.5 text-xs font-bold rounded-md border transition-colors ${
-              filterMode === "significant"
-                ? "bg-amber-500 text-white border-amber-500"
-                : "bg-white text-stone-600 border-stone-300 hover:border-stone-400"
-            }`}
-          >
-            &gt;3
+            -
           </button>
         </div>
       </div>
@@ -551,54 +454,6 @@ function DeltasSection({
           <p className="text-sm text-stone-500 font-medium tracking-normal">
             Tidak ada yang cocok dengan filter
           </p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function NoticesSection({ result }) {
-  return (
-    <div className="space-y-3">
-      <h3 className="text-xs font-bold text-stone-600 uppercase tracking-wider mb-3">
-        Perlu Diperhatikan
-      </h3>
-
-      {result.isCloseCall && (
-        <div className="px-4 py-3.5 bg-amber-50 border border-amber-200 rounded-xl">
-          <p className="text-sm text-amber-900 leading-relaxed font-medium tracking-normal">
-            <span className="font-bold">Hampir Sama:</span> Selisih skor sangat
-            tipis. Kembali pada prioritas Anda saat ini.
-          </p>
-        </div>
-      )}
-
-      {result.hasExtremeSacrifice && (
-        <div className="px-4 py-3.5 bg-rose-50 border border-rose-200 rounded-xl">
-          <p className="text-sm text-rose-900 leading-relaxed font-medium mb-2.5 tracking-normal">
-            <span className="font-bold">Ada Dampak Berat:</span> Ada pengorbanan
-            yang cukup signifikan di salah satu pilihan.
-          </p>
-          <div className="space-y-2 pl-2">
-            {result.totals.map((total, idx) => {
-              const sacrifice = result.sacrifices?.[total.optionId];
-              if (!sacrifice || sacrifice.value > -5) return null;
-
-              return (
-                <div key={total.optionId} className="flex items-start gap-2.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-rose-600 mt-1.5 flex-shrink-0"></div>
-                  <p className="text-sm text-rose-800 font-medium tracking-normal">
-                    {total.title || `Pilihan ${idx + 1}`}:{" "}
-                    {
-                      DIMENSIONS.find((d) => d.key === sacrifice.dimension)
-                        ?.label
-                    }{" "}
-                    <span className="font-bold">({sacrifice.value})</span>
-                  </p>
-                </div>
-              );
-            })}
-          </div>
         </div>
       )}
     </div>
