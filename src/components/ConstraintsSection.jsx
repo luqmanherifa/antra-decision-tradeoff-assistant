@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { WarningTriangleIcon, InfoIcon, PlusIcon } from "./icons";
+import {
+  WarningTriangleIcon,
+  InfoIcon,
+  PlusIcon,
+  CheckIcon,
+  CloseIcon,
+} from "./icons";
 
 export default function ConstraintsSection({
   constraints,
@@ -83,8 +89,8 @@ function ConstraintItem({
   return (
     <div className="border border-amber-200 bg-amber-50 rounded-xl p-4">
       <input
-        className="w-full px-4 py-3 border border-stone-300 rounded-lg text-sm font-medium mb-4 bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
-        placeholder="Anggaran kopi 300 ribu per bulan"
+        className="w-full px-4 py-3 border border-stone-300 rounded-lg text-sm font-semibold mb-4 bg-white text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
+        placeholder="Budget kopi hari ini cuma 15 ribu"
         value={constraint.text}
         onChange={(e) => onUpdate({ text: e.target.value })}
       />
@@ -144,36 +150,96 @@ function ConstraintItem({
               Penalti Jika Dilanggar
             </label>
             <input
-              type="number"
+              type="text"
+              inputMode="numeric"
               className="w-full px-3 py-2.5 border border-stone-300 rounded-lg text-sm font-bold text-center text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-amber-500 transition-colors"
-              value={constraint.penalty}
-              onChange={(e) => onUpdate({ penalty: Number(e.target.value) })}
+              placeholder="-10"
+              value={constraint.penalty === 0 ? "" : constraint.penalty}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "" || val === "-" || /^-?\d+$/.test(val)) {
+                  onUpdate({
+                    penalty: val === "" || val === "-" ? 0 : Number(val),
+                  });
+                }
+              }}
             />
           </div>
         )}
       </div>
 
       <div className="mb-4">
-        <h3 className="text-xs font-semibold text-stone-600 mb-3 tracking-normal">
-          Pilihan yang Memenuhi
-        </h3>
+        <div className="mb-2">
+          <h3 className="text-xs font-semibold text-stone-600 tracking-normal">
+            Pilihan yang MELANGGAR batasan ini
+          </h3>
+          <p className="text-xs text-stone-500 mt-1 tracking-normal">
+            {constraint.type === "soft"
+              ? `Akan kena penalti ${constraint.penalty} poin`
+              : "Pilihan akan gugur dari hasil"}
+          </p>
+        </div>
+
         <div className="bg-white border border-stone-200 rounded-lg p-2.5 space-y-2">
-          {options.map((opt) => (
-            <label
-              key={opt.id}
-              className="flex items-center gap-3 px-3 py-2.5 bg-stone-50 border border-stone-200 rounded-lg cursor-pointer hover:border-amber-300 hover:bg-stone-100 transition-colors"
-            >
-              <input
-                type="checkbox"
-                checked={constraint.checks[opt.id] === true}
-                onChange={(e) => onUpdateCheck(opt.id, e.target.checked)}
-                className="w-4 h-4 rounded border-stone-400 text-amber-500 focus:ring-0 focus:ring-offset-0"
-              />
-              <span className="text-sm text-stone-700 font-medium flex-1 tracking-normal">
-                {opt.title || `Pilihan ${options.indexOf(opt) + 1}`}
-              </span>
-            </label>
-          ))}
+          {options.map((opt) => {
+            const isViolating = constraint.checks[opt.id] === true;
+
+            return (
+              <label
+                key={opt.id}
+                className={`flex items-start gap-3 px-3 py-2.5 rounded-lg border cursor-pointer transition-colors ${
+                  isViolating
+                    ? constraint.type === "hard"
+                      ? "bg-rose-50 border-rose-300 hover:bg-rose-100"
+                      : "bg-amber-50 border-amber-300 hover:bg-amber-100"
+                    : "bg-stone-50 border-stone-200 hover:border-stone-300 hover:bg-stone-100"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={isViolating}
+                  onChange={(e) => onUpdateCheck(opt.id, e.target.checked)}
+                  className={`w-4 h-4 mt-0.5 rounded border-stone-400 focus:ring-0 focus:ring-offset-0 ${
+                    constraint.type === "hard"
+                      ? "text-rose-500"
+                      : "text-amber-500"
+                  }`}
+                />
+                <div className="flex-1 min-w-0">
+                  <span className="text-sm text-stone-800 font-semibold block tracking-normal">
+                    {opt.title || `Pilihan ${options.indexOf(opt) + 1}`}
+                  </span>
+                  {isViolating && (
+                    <span
+                      className={`text-xs font-bold mt-1 flex items-center gap-1.5 tracking-normal ${
+                        constraint.type === "hard"
+                          ? "text-rose-700"
+                          : "text-amber-700"
+                      }`}
+                    >
+                      {constraint.type === "hard" ? (
+                        <>
+                          <CloseIcon className="w-3.5 h-3.5 flex-shrink-0" />
+                          <span>Gugur dari hasil</span>
+                        </>
+                      ) : (
+                        <>
+                          <WarningTriangleIcon className="w-3.5 h-3.5 flex-shrink-0" />
+                          <span>Kena penalti {constraint.penalty} poin</span>
+                        </>
+                      )}
+                    </span>
+                  )}
+                  {!isViolating && (
+                    <span className="text-xs text-emerald-600 font-semibold mt-1 flex items-center gap-1.5 tracking-normal">
+                      <CheckIcon className="w-3.5 h-3.5 flex-shrink-0" />
+                      <span>Aman dari batasan</span>
+                    </span>
+                  )}
+                </div>
+              </label>
+            );
+          })}
         </div>
       </div>
 
